@@ -1,0 +1,10 @@
+dau tien no doc ca Tweets dua vao mot list
+
+1 phan tu cua list, co dang nhu the nay
+2402/469799863866384384:[u'RT', u'@teddyferrari1', u':', u'"', u'Ah', u'...', u'@Datzmenoni', u':', u'Why', u'sub', u'Ozil', u'"', u'@lexzydoo_ab', u':', u'Opolo', u'eyes', u'u', u'no', u'fit', u'open', u'eyes', u'""']->[u'rt', u'@teddyferrari1', u':', u'"', u'ah', u'...', u'@datzmenoni', u':', u'why', u'sub', u'ozil', u'"', u'@lexzydoo_ab', u':', u'opolo', u'eyes', u'you', u'no', u'fit', u'open', u'eyes', u'""']
+
+
+tweets: tid, index, input, output
+
+
+

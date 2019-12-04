@@ -5238,3 +5238,152 @@ INFO:eval:Corpus F1 score: 78.51
 INFO:eval:Predictions saved to spelling_model/valid.pred.char
 INFO:main:*** Finished Character model ***
 
+INFO:main:*** Character model ***
+INFO:model:Building Model
+INFO:model:* number of parameters: 10437793
+INFO:main:Namespace(attention=True, backward_splits=None, batch_size=500, bias=True, bos=True, brnn=True, char_model=None, correct_unique_mappings=False, cuda=True, data_augm=True, dropout=0.5, emb_size=256, end_epoch=50, eos=True, eval=False, gpu=0, input='spelling', interactive=False, layers=3, learning_rate_decay=0.05, load_from=None, log_interval=1, logfolder=True, lowercase=True, lr=0.001, max_grad_norm=5.0, max_train_decode_len=50, maxlen=None, noise_ratio=0.1, optim='adam', rnn_size=500, rnn_type='LSTM', save_dir='spelling_model', save_interval=-1, seed=3435, self_tok=False, share_embeddings=True, share_vocab=True, start_decay_after=30, start_epoch=1, teacher_forcing_ratio=0.6, testdata='dataset/test_truth.json', tie_decoder_embeddings=True, traindata='dataset/train_data.json', valsplit=0, vocab_size=None)
+INFO:main:Loading test data for character model from "dataset/test_truth.json"
+INFO:main:Loading training data for character model from "dataset/train_data.json"
+INFO:main: * Character model vocabulary size. source = 41; target = 41
+INFO:main: * Character model maximum batch size. 500
+INFO:main:Seq2Seq(
+  (encoder): EncoderRNN(
+    (embedding): Embedding(41, 256, padding_idx=0)
+    (rnn): LSTM(256, 250, num_layers=3, dropout=0.5, bidirectional=True)
+  )
+  (decoder): LuongAttnDecoderRNN(
+    (tanh): Tanh()
+    (embedding): Embedding(41, 256, padding_idx=0)
+    (rnn): LSTM(256, 500, num_layers=3, dropout=0.5)
+    (W_a): Linear(in_features=500, out_features=500, bias=True)
+    (W_c): Linear(in_features=1000, out_features=500, bias=True)
+    (W_proj): Linear(in_features=500, out_features=256, bias=True)
+    (W_s): Linear(in_features=256, out_features=41, bias=True)
+  )
+)
+INFO:train:
+* TextNorm epoch *
+INFO:train:Model optim lr: 0.001
+INFO:train:Epoch   1,       1/70 batches  loss:3.830775,  num_corrects :94,  num_tgts :3140 ,accuracy:2.993631
+INFO:train:Epoch   1,       2/70 batches  loss:3.085788,  num_corrects :1000,  num_tgts :3124 ,accuracy:32.010243
+INFO:train:Epoch   1,       3/70 batches  loss:2.915627,  num_corrects :663,  num_tgts :3128 ,accuracy:21.195652
+INFO:train:Epoch   1,       4/70 batches  loss:2.697757,  num_corrects :1048,  num_tgts :3219 ,accuracy:32.556695
+INFO:train:Epoch   1,       5/70 batches  loss:2.390983,  num_corrects :1133,  num_tgts :3091 ,accuracy:36.654804
+INFO:train:Epoch   1,       6/70 batches  loss:2.406828,  num_corrects :1175,  num_tgts :3124 ,accuracy:37.612036
+INFO:train:Epoch   1,       7/70 batches  loss:2.088579,  num_corrects :1211,  num_tgts :3021 ,accuracy:40.086064
+INFO:train:Epoch   1,       8/70 batches  loss:2.058797,  num_corrects :1323,  num_tgts :3249 ,accuracy:40.720222
+INFO:train:Epoch   1,       9/70 batches  loss:2.034124,  num_corrects :1292,  num_tgts :3111 ,accuracy:41.530055
+INFO:train:Epoch   1,      10/70 batches  loss:1.951371,  num_corrects :1337,  num_tgts :3171 ,accuracy:42.163355
+INFO:train:Epoch   1,      11/70 batches  loss:1.782722,  num_corrects :1408,  num_tgts :3079 ,accuracy:45.729133
+INFO:train:Epoch   1,      12/70 batches  loss:1.870692,  num_corrects :1419,  num_tgts :3241 ,accuracy:43.782783
+INFO:train:Epoch   1,      13/70 batches  loss:1.799106,  num_corrects :1329,  num_tgts :3086 ,accuracy:43.065457
+INFO:train:Epoch   1,      14/70 batches  loss:1.695361,  num_corrects :1468,  num_tgts :3085 ,accuracy:47.585089
+INFO:train:Epoch   1,      15/70 batches  loss:1.545121,  num_corrects :1545,  num_tgts :3115 ,accuracy:49.598716
+INFO:train:Epoch   1,      16/70 batches  loss:1.631967,  num_corrects :1646,  num_tgts :3253 ,accuracy:50.599447
+INFO:train:Epoch   1,      17/70 batches  loss:1.452847,  num_corrects :1655,  num_tgts :3108 ,accuracy:53.249678
+INFO:train:Epoch   1,      18/70 batches  loss:1.430108,  num_corrects :1740,  num_tgts :3176 ,accuracy:54.785894
+INFO:train:Epoch   1,      19/70 batches  loss:1.425934,  num_corrects :1728,  num_tgts :3276 ,accuracy:52.747253
+INFO:train:Epoch   1,      20/70 batches  loss:1.280898,  num_corrects :1839,  num_tgts :3103 ,accuracy:59.265227
+INFO:train:Epoch   1,      21/70 batches  loss:1.196555,  num_corrects :1996,  num_tgts :3163 ,accuracy:63.104647
+INFO:train:Epoch   1,      22/70 batches  loss:1.222800,  num_corrects :1946,  num_tgts :3158 ,accuracy:61.621279
+INFO:train:Epoch   1,      23/70 batches  loss:1.157324,  num_corrects :1960,  num_tgts :3093 ,accuracy:63.368898
+INFO:train:Epoch   1,      24/70 batches  loss:1.066628,  num_corrects :2013,  num_tgts :3168 ,accuracy:63.541667
+INFO:train:Epoch   1,      25/70 batches  loss:1.186007,  num_corrects :1979,  num_tgts :3218 ,accuracy:61.497825
+INFO:train:Epoch   1,      26/70 batches  loss:0.975322,  num_corrects :2123,  num_tgts :3116 ,accuracy:68.132221
+INFO:train:Epoch   1,      27/70 batches  loss:0.995281,  num_corrects :2176,  num_tgts :3075 ,accuracy:70.764228
+INFO:train:Epoch   1,      28/70 batches  loss:0.895069,  num_corrects :2296,  num_tgts :3208 ,accuracy:71.571072
+INFO:train:Epoch   1,      29/70 batches  loss:0.892484,  num_corrects :2292,  num_tgts :3170 ,accuracy:72.302839
+INFO:train:Epoch   1,      30/70 batches  loss:0.876217,  num_corrects :2358,  num_tgts :3169 ,accuracy:74.408331
+INFO:train:Epoch   1,      31/70 batches  loss:0.931102,  num_corrects :2349,  num_tgts :3224 ,accuracy:72.859801
+INFO:train:Epoch   1,      32/70 batches  loss:0.747294,  num_corrects :2477,  num_tgts :3219 ,accuracy:76.949363
+INFO:train:Epoch   1,      33/70 batches  loss:0.762244,  num_corrects :2526,  num_tgts :3244 ,accuracy:77.866831
+INFO:train:Epoch   1,      34/70 batches  loss:0.810213,  num_corrects :2522,  num_tgts :3237 ,accuracy:77.911647
+INFO:train:Epoch   1,      35/70 batches  loss:0.995613,  num_corrects :2309,  num_tgts :3245 ,accuracy:71.155624
+INFO:train:Epoch   1,      36/70 batches  loss:0.982732,  num_corrects :2255,  num_tgts :3232 ,accuracy:69.771040
+INFO:train:Epoch   1,      37/70 batches  loss:0.847065,  num_corrects :2308,  num_tgts :3147 ,accuracy:73.339689
+INFO:train:Epoch   1,      38/70 batches  loss:0.942063,  num_corrects :2266,  num_tgts :3122 ,accuracy:72.581678
+INFO:train:Epoch   1,      39/70 batches  loss:0.883669,  num_corrects :2312,  num_tgts :3127 ,accuracy:73.936681
+INFO:train:Epoch   1,      40/70 batches  loss:0.831121,  num_corrects :2378,  num_tgts :3170 ,accuracy:75.015773
+INFO:train:Epoch   1,      41/70 batches  loss:0.822933,  num_corrects :2384,  num_tgts :3230 ,accuracy:73.808050
+INFO:train:Epoch   1,      42/70 batches  loss:0.702132,  num_corrects :2371,  num_tgts :3089 ,accuracy:76.756232
+INFO:train:Epoch   1,      43/70 batches  loss:0.634246,  num_corrects :2502,  num_tgts :3084 ,accuracy:81.128405
+INFO:train:Epoch   1,      44/70 batches  loss:0.725333,  num_corrects :2537,  num_tgts :3116 ,accuracy:81.418485
+INFO:train:Epoch   1,      45/70 batches  loss:0.650538,  num_corrects :2479,  num_tgts :3108 ,accuracy:79.761905
+INFO:train:Epoch   1,      46/70 batches  loss:0.664288,  num_corrects :2450,  num_tgts :3071 ,accuracy:79.778574
+INFO:train:Epoch   1,      47/70 batches  loss:0.629179,  num_corrects :2496,  num_tgts :3079 ,accuracy:81.065281
+INFO:train:Epoch   1,      48/70 batches  loss:0.598608,  num_corrects :2598,  num_tgts :3155 ,accuracy:82.345483
+INFO:train:Epoch   1,      49/70 batches  loss:0.585190,  num_corrects :2557,  num_tgts :3097 ,accuracy:82.563771
+INFO:train:Epoch   1,      50/70 batches  loss:0.456010,  num_corrects :2736,  num_tgts :3183 ,accuracy:85.956645
+INFO:train:Epoch   1,      51/70 batches  loss:0.616568,  num_corrects :2620,  num_tgts :3158 ,accuracy:82.963901
+INFO:train:Epoch   1,      52/70 batches  loss:0.431195,  num_corrects :2780,  num_tgts :3176 ,accuracy:87.531486
+INFO:train:Epoch   1,      53/70 batches  loss:0.457986,  num_corrects :2809,  num_tgts :3234 ,accuracy:86.858380
+INFO:train:Epoch   1,      54/70 batches  loss:0.646315,  num_corrects :2590,  num_tgts :3211 ,accuracy:80.660230
+INFO:train:Epoch   1,      55/70 batches  loss:0.520432,  num_corrects :2685,  num_tgts :3140 ,accuracy:85.509554
+INFO:train:Epoch   1,      56/70 batches  loss:0.489495,  num_corrects :2802,  num_tgts :3226 ,accuracy:86.856789
+INFO:train:Epoch   1,      57/70 batches  loss:0.372428,  num_corrects :3000,  num_tgts :3317 ,accuracy:90.443172
+INFO:train:Epoch   1,      58/70 batches  loss:0.445698,  num_corrects :2796,  num_tgts :3174 ,accuracy:88.090737
+INFO:train:Epoch   1,      59/70 batches  loss:0.381235,  num_corrects :2798,  num_tgts :3085 ,accuracy:90.696921
+INFO:train:Epoch   1,      60/70 batches  loss:0.333476,  num_corrects :2944,  num_tgts :3215 ,accuracy:91.570762
+INFO:train:Epoch   1,      61/70 batches  loss:0.357135,  num_corrects :2860,  num_tgts :3139 ,accuracy:91.111819
+INFO:train:Epoch   1,      62/70 batches  loss:0.303299,  num_corrects :2923,  num_tgts :3135 ,accuracy:93.237640
+INFO:train:Epoch   1,      63/70 batches  loss:0.347821,  num_corrects :2879,  num_tgts :3167 ,accuracy:90.906220
+INFO:train:Epoch   1,      64/70 batches  loss:0.350012,  num_corrects :2843,  num_tgts :3129 ,accuracy:90.859700
+INFO:train:Epoch   1,      65/70 batches  loss:0.253041,  num_corrects :2931,  num_tgts :3093 ,accuracy:94.762367
+INFO:train:Epoch   1,      66/70 batches  loss:0.347251,  num_corrects :2988,  num_tgts :3194 ,accuracy:93.550407
+INFO:train:Epoch   1,      67/70 batches  loss:0.258508,  num_corrects :2946,  num_tgts :3135 ,accuracy:93.971292
+INFO:train:Epoch   1,      68/70 batches  loss:0.228865,  num_corrects :3004,  num_tgts :3177 ,accuracy:94.554611
+INFO:train:Epoch   1,      69/70 batches  loss:0.326559,  num_corrects :2869,  num_tgts :3093 ,accuracy:92.757840
+INFO:train:Epoch   1,      70/70 batches  loss:0.341338,  num_corrects :2236,  num_tgts :2442 ,accuracy:91.564292
+INFO:train:Train loss: 1.07
+INFO:train:Train total_accuracy: 69.15
+INFO:eval:correct_norm:689.0, total_norm:5584.0, total_nsw:3008.0
+INFO:eval:precision:0.123388252149, recall:0.229055851064, f1:0.160381750466
+
+INFO:eval:ind:2453 tid:470354589930512384 
+input:wolfnsheepclothing140
+target:wolfnsheepclothing140
+prediction:wolfnsheceitoriceiotiner
+
+INFO:eval:ind:2446 tid:471600545665265664 
+input:investissement
+target:investissement
+prediction:investisenteinterintentinet
+
+INFO:eval:ind:2460 tid:472015563670036481 
+input:receptionist
+target:receptionist
+prediction:receptionits
+
+INFO:eval:ind:2418 tid:469947163615952896 
+input:councillors
+target:councillors
+prediction:councillors
+
+INFO:eval:ind:2429 tid:469819040219664384 
+input:personality
+target:personality
+prediction:personality
+
+INFO:train:
+* TextNorm epoch *
+INFO:train:Model optim lr: 0.001
+INFO:train:Epoch   2,       1/70 batches  loss:0.398203,  num_corrects :2878,  num_tgts :3140 ,accuracy:91.656051
+INFO:train:Epoch   2,       2/70 batches  loss:0.182703,  num_corrects :3008,  num_tgts :3124 ,accuracy:96.286812
+INFO:train:Epoch   2,       3/70 batches  loss:0.411394,  num_corrects :2848,  num_tgts :3128 ,accuracy:91.048593
+INFO:train:Epoch   2,       4/70 batches  loss:0.284437,  num_corrects :3001,  num_tgts :3219 ,accuracy:93.227710
+INFO:train:Epoch   2,       5/70 batches  loss:0.229071,  num_corrects :2943,  num_tgts :3091 ,accuracy:95.211906
+INFO:train:Epoch   2,       6/70 batches  loss:0.338940,  num_corrects :2886,  num_tgts :3124 ,accuracy:92.381562
+INFO:train:Epoch   2,       7/70 batches  loss:0.178259,  num_corrects :2900,  num_tgts :3021 ,accuracy:95.994704
+INFO:train:Epoch   2,       8/70 batches  loss:0.259608,  num_corrects :3008,  num_tgts :3249 ,accuracy:92.582333
+INFO:train:Epoch   2,       9/70 batches  loss:0.276179,  num_corrects :2935,  num_tgts :3111 ,accuracy:94.342655
+INFO:train:Epoch   2,      10/70 batches  loss:0.306333,  num_corrects :2923,  num_tgts :3171 ,accuracy:92.179123
+INFO:train:Epoch   2,      11/70 batches  loss:0.290767,  num_corrects :2913,  num_tgts :3079 ,accuracy:94.608639
+INFO:train:Epoch   2,      12/70 batches  loss:0.276790,  num_corrects :3028,  num_tgts :3241 ,accuracy:93.427954
+INFO:train:Epoch   2,      13/70 batches  loss:0.225803,  num_corrects :2924,  num_tgts :3086 ,accuracy:94.750486
+INFO:train:Epoch   2,      14/70 batches  loss:0.227171,  num_corrects :2921,  num_tgts :3085 ,accuracy:94.683955
+INFO:train:Epoch   2,      15/70 batches  loss:0.199334,  num_corrects :2997,  num_tgts :3115 ,accuracy:96.211878
+INFO:train:Epoch   2,      16/70 batches  loss:0.302569,  num_corrects :3080,  num_tgts :3253 ,accuracy:94.681832
+INFO:train:Epoch   2,      17/70 batches  loss:0.246579,  num_corrects :2956,  num_tgts :3108 ,accuracy:95.109395
+INFO:train:Epoch   2,      18/70 batches  loss:0.343150,  num_corrects :2915,  num_tgts :3176 ,accuracy:91.782116
+INFO:train:Epoch   2,      19/70 batches  loss:0.205862,  num_corrects :3144,  num_tgts :3276 ,accuracy:95.970696
+INFO:train:Epoch   2,      20/70 batches  loss:0.281803,  num_corrects :2900,  num_tgts :3103 ,accuracy:93.457944

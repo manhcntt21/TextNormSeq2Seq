@@ -13,6 +13,7 @@ def train_char_model(args):
     opt = copy.deepcopy(args)
     opt.input = 'spelling'
     train_data, valid_data, test_data, vocab, mappings = lib.data.create_datasets(opt)
+
     char_model, char_optim = lib.model.create_model((vocab['src'], vocab['tgt']), opt, is_char_model = True)
     char_evaluator = lib.train.Evaluator(char_model, opt)
     char_test_evaluator = lib.train.Evaluator(char_model, opt)
@@ -53,10 +54,14 @@ def train_char_model(args):
 def main():
     opt = parser.parse_args()
     opt = change_args(opt)
+    print(opt.eval)
     logging.basicConfig(filename=os.path.join(opt.save_dir, 'output.log') if opt.logfolder else None, level=logging.INFO)
     unk_model = train_char_model(opt) if(opt.input in ['hybrid', 'spelling']) else None
+
     if(opt.input =='spelling'): exit()
     train_data, valid_data, test_data, vocab, mappings = lib.data.create_datasets(opt)
+    # print(opt.eos)
+    # print(opt.bos)
     model, optim = lib.model.create_model((vocab['src'], vocab['tgt']), opt)
     evaluator = lib.train.Evaluator(model, opt, unk_model)
     test_evaluator = lib.train.Evaluator(model, opt, unk_model)
@@ -82,6 +87,7 @@ def main():
         pred_file = os.path.join(opt.save_dir, 'valid.pred')
         evaluator.eval(valid_data, pred_file=pred_file)
     else: # Training
+        ## validdata cung chinh la training data 
         trainer = lib.train.Trainer(model, evaluator, train_data, valid_data ,optim, opt)
         trainer.train(opt.start_epoch, opt.end_epoch)
         logger.info("=======Eval on test set=============")

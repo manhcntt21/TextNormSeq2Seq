@@ -23,6 +23,7 @@ class Dict(object):
             self.vocab.append(word)
 
     def makeVocabulary(self, vocab_size=None):
+        # counter la mot dic dung de dem so lan cua cac object 
         self.vocab = Counter(self.vocab)
         self.vocab_counts = Counter(self.vocab)
         self.vocab = self.prune(vocab_size)

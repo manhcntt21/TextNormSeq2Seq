@@ -106,7 +106,8 @@ class DataLoader(object):
                                     target_vocab.add_words(owordv)
                                     tweet.set_input(iwordv)
                                     tweet.set_output(owordv)
-                                    word_tweets.append(tweet)
+                                    word_tweets.append(copy.deepcopy(tweet))
+                                    # word_tweets.append(tweet)
             else:
                 inp_i, inp_o = self.vector_repr(inp_i, inp_o, update_mappings)
                 source_vocab.add_words(inp_i)
@@ -115,8 +116,9 @@ class DataLoader(object):
                 tweet.set_output(inp_o)
                 word_tweets.append(tweet)
 
-
+        # print(source_vocab.vocab)
         tweets = word_tweets
+        # print(tweets)
         if(self.opt.input == 'spelling'):
             same_tw, diff_tw = [], []
             for tweet in tweets:
@@ -129,6 +131,19 @@ class DataLoader(object):
         source_vocab.makeLabelToIdx()
         target_vocab.makeVocabulary(self.opt.vocab_size)
         target_vocab.makeLabelToIdx()
+        # for i in source_vocab.vocab:
+        #     print(source_vocab.vocab[i])
+        # print("---------")
+        # print(source_vocab.vocab)
+
+        # for i in range(len(source_vocab.idx_to_label)):
+        #     # print(i)
+        #     if(source_vocab.idx_to_label[i] != target_vocab.idx_to_label[i]):
+        #         print("haha")
+        ## voi words model thi idx_to_label cua source vs target = nhau 
+        # print(source_vocab.idx_to_label[1])
+        # # print(target_vocab.idx_to_label)
+        # print(len(source_vocab.idx_to_label))
         if(self.opt.share_vocab):
             assert source_vocab.idx_to_label == target_vocab.idx_to_label
         return tweets, source_vocab, target_vocab
@@ -226,6 +241,7 @@ def create_data(data, opt, vocab=None, mappings=None):
     vocab['src'] = dataload.source_vocab
     vocab['tgt'] = dataload.target_vocab
     return dataload.ret, vocab, dataload.mappings
+    # return {}, {}, {}
 
 
 def create_datasets(opt):
@@ -236,18 +252,24 @@ def create_datasets(opt):
     else: val_data, val_vocab, mappings = train_data, vocab, mappings
     test_data, test_vocab, mappings = create_data(test, opt=opt, vocab=vocab, mappings=mappings)
     return train_data, val_data, test_data, vocab, mappings
+    # return [], [], [], [], []
+
 
 
 def read_file(fn, valsplit=None):
     tweets = []
     with open(fn, 'r') as json_data:
         data = json.load(json_data)
+    # i = 0
     for tweet in data:
         src_tweet = tweet['input']
         tgt_tweet = tweet['output']
         ind = tweet['index']
         tid = tweet['tid']
         tweets.append(Tweet(src_tweet, tgt_tweet, tid, ind))
+    #     if(len(src_tweet) != len(tgt_tweet)):
+    #         i = i + 1
+    # print(i)
     if(valsplit):
         random.shuffle(tweets)
         val = tweets[:valsplit]

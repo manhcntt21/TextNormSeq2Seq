@@ -26,7 +26,7 @@ class Trainer(object):
             total_loss, total_accuracy = self.train_epoch(epoch)
             logger.info('Train loss: %.2f' % total_loss)
             logger.info('Train total_accuracy: %.2f' % total_accuracy)
-            valid_loss, valid_f1 = self.evaluator.eval(self.eval_data)
+            valid_loss, valid_f1 = self.evaluator.eval(self.eval_data) #######
             self.optim.update_lr(valid_loss, epoch)
             if epoch % self.opt.save_interval == 0 or epoch==end_epoch:
                 checkpoint = {
@@ -64,6 +64,6 @@ class Trainer(object):
             if (i + 1) % self.opt.log_interval == 0:
                 words_pers = int(num_words / (time.time() - epoch_time))
                 accuracy = 100 * (num_corrects/float(num_tgts))
-                logger.info('Epoch %3d,  %6d/%d batches  loss:%f,  num_words:%d,  accuracy:%f' %
-                      (epoch, i + 1, num_batches, loss, words_pers, accuracy))
+                logger.info('Epoch %3d,  %6d/%d batches  loss:%f,  num_corrects :%d,  num_tgts :%d ,accuracy:%f' %(epoch, i + 1, num_batches, loss, num_corrects, num_tgts,accuracy))
+                # logger.info('Epoch %3d,  %6d/%d batches  loss:%f,  num_words:%d,  accuracy:%f' %(epoch, i + 1, num_batches, loss, words_pers, accuracy))
         return total_loss/float(num_batches), 100*(total_corrects/float(total_tgts))

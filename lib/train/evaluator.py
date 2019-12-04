@@ -49,7 +49,8 @@ class Evaluator(object):
             if(self.opt.self_tok):
                 preds = lib.metric.clean_self_toks(src_sent_words, preds, self.opt.self_tok)
                 tgt_sent_words = lib.metric.clean_self_toks(src_sent_words, tgt_sent_words, self.opt.self_tok)
-
+            ##################
+            ## la gia tri f1 tinh theo tung cau mot
             sent_f1 = [lib.metric.f1([s], [p], [t], spelling=(self.opt.input=='spelling'))['f1'] for s, p, t in zip(src_sent_words, preds, tgt_sent_words)]
             all_inputs.extend(src_sent_words)
             all_preds.extend(preds)
