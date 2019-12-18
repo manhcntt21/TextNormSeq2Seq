@@ -32,7 +32,7 @@ def train_char_model(args):
             prediction = char_test_evaluator.eval(test_data)
             print('Prediction is: {}'.format(''.join(prediction)))
     elif opt.eval: # Evaluation only
-        logger.info("=======Char eval on test set=============")
+        # logger.info("=======Char eval on test set=============")
         # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
         # char_test_evaluator.eval(test_data, pred_file=pred_file)
         # logger.info("=======Char eval on validation set=============")
