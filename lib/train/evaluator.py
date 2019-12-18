@@ -26,6 +26,7 @@ class Evaluator(object):
             src, src_lens = batch['src']
             tids = batch['tid']
             indices = batch['index']
+
             outputs = self.model(batch, eval=True)
             mask = lib.metric.sequence_mask(sequence_length=tgt_lens, max_len=tgt.size(0)).transpose(0,1)
             loss, _ = self.model.backward(outputs, tgt, mask, criterion=self.criterion, eval=True, normalize=True)
@@ -34,6 +35,7 @@ class Evaluator(object):
             src, tgt = src.data.t().tolist(), tgt.data.t().tolist()
             src = lib.metric.to_words(src, self.model.encoder.vocab)
             preds = lib.metric.to_words(predictions, self.model.decoder.vocab)
+
             tgt_sent_words = batch['tgt_sent_words']
             src_sent_words = batch['src_sent_words']
 
@@ -43,8 +45,9 @@ class Evaluator(object):
                 preds = lib.metric.char_to_words(preds)
             
             #write predictions from secondary char model to file
-            unk_file = csv.writer(open(os.path.join(self.opt.save_dir, "unkowns.csv"), "a"), delimiter='\t') if self.unk_model and not self.opt.interactive else None
+            unk_file = csv.writer(open(os.path.join(self.opt.save_dir, "unkowns.csv"), "a"), delimiter='\t') if self.unk_model and self.opt.interactive else None
             preds = lib.metric.handle_tags(src_sent_words, preds)
+
             preds = lib.metric.handle_unk(src, src_sent_words, preds, self.unk_model, unk_file)
             if(self.opt.self_tok):
                 preds = lib.metric.clean_self_toks(src_sent_words, preds, self.opt.self_tok)
@@ -56,7 +59,7 @@ class Evaluator(object):
             all_preds.extend(preds)
             all_targets.extend(tgt_sent_words)
             all_others.extend([x for x in zip(tids, indices, sent_f1)])
-            total_loss += loss
+            # total_loss += loss
 
         valid_loss =  total_loss/float(num_batches)
         results = lib.metrics.f1(all_inputs, all_preds, all_targets, spelling=(self.opt.input=='spelling'))
