@@ -158,6 +158,7 @@ class DataLoader(object):
             3) if vowel in sentence extend vowel (o, u, e, a, i)
             4-6) misplaced or missing " ' "
             7-10) keyboard errors
+            11) nhung chu cai co phat am giong nhau
         """
         i = random.randint(0,len(word)-1)
         op = random.randint(0, 10)
@@ -191,8 +192,40 @@ class DataLoader(object):
             idx = word.find("'")
             if idx != -1:
                 return word[:idx] + word[idx+1:]
+        if op == 11:
+            return word[:i] + random.choice(self.repleace_character[word[i]])) + word[i+1:]
+        # thay doi dau
+        if op == 12:
+            return word[:i] + random.choice(self.change_sign[word[i]])) + word[i+1:]
         return word[:i] + random.choice(self.prox_arr[word[i]]) + word[i+1:]  #default is keyboard errors
-            
+    def change_sign(self):
+        sign{}
+        sign['a'] = ['\xc3\xa0', '\xc3\xa1', '\xc3\xa2', '\xc3\xa3', '\xe1\xba\xa1', '\xe1\xba\xa3', '\xe1\xba\xa5', '\xe1\xba\xa5', '\xe1\xba\xad', '\xe1\xba\xaf', '\xe1\xba\xb7'] # a à á â ã ạ ả ấ  ầ  ậ ắ  ặ 
+        sign['e'] = ['\xc3\xa8', '\xc3\xa9', '\xc3\xaa', '\xe1\xba\xb9' , '\xe1\xba\xbb', '\xe1\xba\xbd', '\xe1\xba\xbf', '\xe1\xbb\x81', '\xe1\xbb\x83', '\xe1\xbb\x85',' \xe1\xbb\x87'] # è é ê  ẹ ẻ ẽ ế  ề  ể  ễ  ệ 
+        sign['i'] = ['\xc3\xac', '\xc3\xad', '\xe1\xbb\x89', '\xe1\xbb\x8b'] # ì í ỉ ị 
+        sign['o'] = ['\xc3\xb2', '\xc3\xb3', '\xc3\xb4', '\xc3\xb5', '\xe1\xbb\x8d', '\xe1\xbb\x8f', '\xe1\xbb\x91', '\xe1\xbb\x93', '\xe1\xbb\x95' , '\xe1\xbb\x97', '\xe1\xbb\x99', '\xe1\xbb\x9b', '\xe1\xbb\x9d', '\xe1\xbb\x9f', '\xe1\xbb\xa1', '\xe1\xbb\xa3'] # ò ó ô  õ ọ ỏ  ố ồ  ổ ộ ớ ờ ỡ ợ 
+        sign['u'] = ['\xc3\xb9', '\xc3\xba', '\xe1\xbb\xa5', '\xe1\xbb\xa7', '\xe1\xbb\xa9', '\xe1\xbb\xab', '\xe1\xbb\xad', '\xe1\xbb\xaf', '\xe1\xbb\xb1'] # ù ú ụ ủ ứ ừ ữ ự 
+        sign['y'] = ['\xc3\xbd', '\xe1\xbb\xb3', '\xe1\xbb\xb5', '\xe1\xbb\xb7']  # ý ỳ ỵ ỷ 
+        return sign
+
+    def repleace_character(self):
+        repleace_character = {}
+        repleace_character['ch'] = ['tr']
+        repleace_character['tr'] = ['ch']
+        repleace_character['l'] = ['n']
+        repleace_character['n'] = ['l']
+        repleace_character['x'] = ['s']
+        repleace_character['s'] = ['x']
+        repleace_character['r'] = ['d', 'gi']
+        repleace_character['d'] = ['r', 'gi']
+        repleace_character['gi'] = ['d', 'r']
+        repleace_character['c'] = ['q', 'k']
+        repleace_character['k'] = ['q', 'c']
+        repleace_character['q'] = ['c', 'k']
+        repleace_character['i'] = ['y']
+        repleace_character['y'] = ['i']
+        return repleace_character
+        
     def get_prox_keys(self):
         array_prox = {}
         array_prox['a'] = ['q', 'w', 'z', 'x', 's']
