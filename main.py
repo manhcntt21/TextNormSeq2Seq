@@ -33,11 +33,11 @@ def train_char_model(args):
             print('Prediction is: {}'.format(''.join(prediction)))
     elif opt.eval: # Evaluation only
         logger.info("=======Char eval on test set=============")
-        # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
-        # char_test_evaluator.eval(test_data, pred_file=pred_file)
-        # logger.info("=======Char eval on validation set=============")
-        # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
-        # char_evaluator.eval(valid_data, pred_file=pred_file)
+        pred_file = os.path.join(opt.save_dir, 'test.pred.char')
+        char_test_evaluator.eval(test_data, pred_file=pred_file)
+        logger.info("=======Char eval on validation set=============")
+        pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
+        char_evaluator.eval(valid_data, pred_file=pred_file)
     else: # Training
         char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt)
         char_trainer.train(opt.start_epoch, opt.end_epoch)
@@ -57,7 +57,6 @@ def main():
     # print(opt.eval)
     logging.basicConfig(filename=os.path.join(opt.save_dir, 'output.log') if opt.logfolder else None, level=logging.INFO)
     unk_model = train_char_model(opt) if(opt.input in ['hybrid', 'spelling']) else None
-
     if(opt.input =='spelling'): exit()
     train_data, valid_data, test_data, vocab, mappings = lib.data.create_datasets(opt)
     # print(opt.eos)

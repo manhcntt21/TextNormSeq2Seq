@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import json
 import logging
 import lib
 import csv
 import os 
-
+import codecs
 logger = logging.getLogger("eval")
 
 
@@ -80,15 +81,16 @@ class Evaluator(object):
             tid, ind, score = other
             token = '' if self.opt.input == 'spelling' else ' '
             logger.info('ind:{} tid:{} \ninput:{}\ntarget:{}\nprediction:{}\n'.format(
-                ind, tid, token.join(input), token.join(target), token.join(pred)))
+                ind, tid, token.join(input).encode('utf-8'), token.join(target).encode('utf-8'), token.join(pred).encode('utf-8')))
 
     def save_json(self, inputs, preds, targets, others, pred_file): #And csv!
         json_entries=[]
         for input, pred, target, other in zip(inputs, preds, targets, others):
             tid, ind, sent_f1 = other
             json_entries.append({"tid":tid,"index":ind,"output":pred,"input":input, "target":target, "score":sent_f1})
-        with open(pred_file, "w") as f:
+        with codecs.open(pred_file, "w", 'utf-8') as f:
             f.write(json.dumps(json_entries, ensure_ascii=False))
+            # json.dumps(json_entries, f,ensure_ascii=False)
         with open(pred_file+".csv", "w") as f:
             tsvfile = csv.writer(f, delimiter='\t')
             tsvfile.writerow(["ixdex", "score", "output", "input", "target"])

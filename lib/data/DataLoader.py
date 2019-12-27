@@ -5,11 +5,14 @@ import random
 import lib
 import json
 import copy
-
+from pyvi import ViTokenizer
+import io
 class DataLoader(object):
     def __init__(self, tweets, vocab, mappings, opt):
         self.opt = opt
         self.prox_arr = self.get_prox_keys()
+        self.change_sign = self.get_change_sign()
+        self.repleace_character = self.get_repleace_character()
         self.mappings = mappings if mappings else {}
         self.tweets, self.source_vocab, self.target_vocab = self.load_data(tweets)
         if(vocab):
@@ -157,11 +160,12 @@ class DataLoader(object):
             2) if the word ends in u, y, s, r, extend the last char
             3) if vowel in sentence extend vowel (o, u, e, a, i)
             4-6) misplaced or missing " ' "
-            7-10) keyboard errors
-            11) nhung chu cai co phat am giong nhau
+            9-12) keyboard errors
+            7) nhung chu cai co phat am giong nhau
+            8)
         """
         i = random.randint(0,len(word)-1)
-        op = random.randint(0, 10)
+        op = random.randint(0, 13)
         if op == 0:
             return word[:i] + word[i+1:]
         if op == 1:
@@ -192,23 +196,31 @@ class DataLoader(object):
             idx = word.find("'")
             if idx != -1:
                 return word[:idx] + word[idx+1:]
-        if op == 11:
-            return word[:i] + random.choice(self.repleace_character[word[i]])) + word[i+1:]
-        # thay doi dau
-        if op == 12:
-            return word[:i] + random.choice(self.change_sign[word[i]])) + word[i+1:]
+        if op == 7:
+            return word[:i] + random.choice(self.repleace_character[word[i]]) + word[i+1:] # thay doi dau
+        if op == 8:
+            return word[:i] + random.choice(self.change_sign[word[i]]) + word[i+1:]
         return word[:i] + random.choice(self.prox_arr[word[i]]) + word[i+1:]  #default is keyboard errors
-    def change_sign(self):
-        sign{}
-        sign['a'] = ['\xc3\xa0', '\xc3\xa1', '\xc3\xa2', '\xc3\xa3', '\xe1\xba\xa1', '\xe1\xba\xa3', '\xe1\xba\xa5', '\xe1\xba\xa5', '\xe1\xba\xad', '\xe1\xba\xaf', '\xe1\xba\xb7'] # a à á â ã ạ ả ấ  ầ  ậ ắ  ặ 
-        sign['e'] = ['\xc3\xa8', '\xc3\xa9', '\xc3\xaa', '\xe1\xba\xb9' , '\xe1\xba\xbb', '\xe1\xba\xbd', '\xe1\xba\xbf', '\xe1\xbb\x81', '\xe1\xbb\x83', '\xe1\xbb\x85',' \xe1\xbb\x87'] # è é ê  ẹ ẻ ẽ ế  ề  ể  ễ  ệ 
-        sign['i'] = ['\xc3\xac', '\xc3\xad', '\xe1\xbb\x89', '\xe1\xbb\x8b'] # ì í ỉ ị 
-        sign['o'] = ['\xc3\xb2', '\xc3\xb3', '\xc3\xb4', '\xc3\xb5', '\xe1\xbb\x8d', '\xe1\xbb\x8f', '\xe1\xbb\x91', '\xe1\xbb\x93', '\xe1\xbb\x95' , '\xe1\xbb\x97', '\xe1\xbb\x99', '\xe1\xbb\x9b', '\xe1\xbb\x9d', '\xe1\xbb\x9f', '\xe1\xbb\xa1', '\xe1\xbb\xa3'] # ò ó ô  õ ọ ỏ  ố ồ  ổ ộ ớ ờ ỡ ợ 
-        sign['u'] = ['\xc3\xb9', '\xc3\xba', '\xe1\xbb\xa5', '\xe1\xbb\xa7', '\xe1\xbb\xa9', '\xe1\xbb\xab', '\xe1\xbb\xad', '\xe1\xbb\xaf', '\xe1\xbb\xb1'] # ù ú ụ ủ ứ ừ ữ ự 
-        sign['y'] = ['\xc3\xbd', '\xe1\xbb\xb3', '\xe1\xbb\xb5', '\xe1\xbb\xb7']  # ý ỳ ỵ ỷ 
-        return sign
 
-    def repleace_character(self):
+    def get_change_sign(self):
+        """
+            # sign['a'] = ['\xc3\xa0', '\xc3\xa1', '\xc3\xa2', '\xc3\xa3', '\xe1\xba\xa1', '\xe1\xba\xa3', '\xe1\xba\xa5', '\xe1\xba\xa5', '\xe1\xba\xad', '\xe1\xba\xaf', '\xe1\xba\xb7'] # a à á â ã ạ ả ấ  ầ  ậ ắ  ặ 
+            # sign['e'] = ['\xc3\xa8', '\xc3\xa9', '\xc3\xaa', '\xe1\xba\xb9' , '\xe1\xba\xbb', '\xe1\xba\xbd', '\xe1\xba\xbf', '\xe1\xbb\x81', '\xe1\xbb\x83', '\xe1\xbb\x85',' \xe1\xbb\x87'] # è é ê  ẹ ẻ ẽ ế  ề  ể  ễ  ệ 
+            # sign['i'] = ['\xc3\xac', '\xc3\xad', '\xe1\xbb\x89', '\xe1\xbb\x8b'] # ì í ỉ ị 
+            # sign['o'] = ['\xc3\xb2', '\xc3\xb3', '\xc3\xb4', '\xc3\xb5', '\xe1\xbb\x8d', '\xe1\xbb\x8f', '\xe1\xbb\x91', '\xe1\xbb\x93', '\xe1\xbb\x95' , '\xe1\xbb\x97', '\xe1\xbb\x99', '\xe1\xbb\x9b', '\xe1\xbb\x9d', '\xe1\xbb\x9f', '\xe1\xbb\xa1', '\xe1\xbb\xa3'] # ò ó ô  õ ọ ỏ  ố ồ  ổ ộ ớ ờ ỡ ợ 
+            # sign['u'] = ['\xc3\xb9', '\xc3\xba', '\xe1\xbb\xa5', '\xe1\xbb\xa7', '\xe1\xbb\xa9', '\xe1\xbb\xab', '\xe1\xbb\xad', '\xe1\xbb\xaf', '\xe1\xbb\xb1'] # ù ú ụ ủ ứ ừ ữ ự 
+            # sign['y'] = ['\xc3\xbd', '\xe1\xbb\xb3', '\xe1\xbb\xb5', '\xe1\xbb\xb7']  # ý ỳ ỵ ỷ 
+        """
+        sign_ = {}
+        sign_['a'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['e'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['i'] = ['ì', 'í', 'ỉ', 'ị']
+        sign_['o'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['u'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+        sign_['y'] = ['ý', 'ỳ', 'ỵ', 'ỷ']
+        return sign_
+
+    def get_repleace_character(self):
         repleace_character = {}
         repleace_character['ch'] = ['tr']
         repleace_character['tr'] = ['ch']
@@ -289,15 +301,74 @@ def create_datasets(opt):
 
 
 
+
+# def read_file(fn, valsplit=None):
+#     tweets = []
+#     data = []
+#     # with open(fn, 'r') as json_data:
+#     #     for x in json_data:
+#     #         data.append(json.loads(x))
+#     # i = 0
+#     with open(fn, 'r') as json_data:
+#         data = json.load(json_data)
+#     print(data)
+#     for tweet in data:
+#         # print(tweet['input'])
+#         # tmp = []
+#         # tmp = tweet['input']
+#         # print(tmp)
+#         tmp = ViTokenizer.tokenize(tweet['raw'])
+#         src_tweet = tmp.split(" ")
+#         # tmp = tweet['output']
+#         tmp = ViTokenizer.tokenize(tweet['original'])
+#         tgt_tweet = tmp.split(" ")
+#         ind = tweet['id']
+#         tid = tweet['tid']
+#         tweets.append(Tweet(src_tweet, tgt_tweet, tid, ind))
+
+#     #     if(len(src_tweet) != len(tgt_tweet)):
+#     #         i = i + 1
+#     # print(i)
+#     if(valsplit):
+#         random.shuffle(tweets)
+#         val = tweets[:valsplit]
+#         train = tweets[valsplit:]
+#         return train, val
+#     return tweets, []
+
+# def read_file(fn, valsplit=None):
+#     tweets = []
+#     with open(fn, 'r') as json_data:
+#         data = json.load(json_data)
+#     # i = 0
+#     for tweet in data:
+#         src_tweet = tweet['input']
+#         tgt_tweet = tweet['output']
+#         ind = tweet['index']
+#         tid = tweet['tid']
+#         tweets.append(Tweet(src_tweet, tgt_tweet, tid, ind))
+#     #     if(len(src_tweet) != len(tgt_tweet)):
+#     #         i = i + 1
+#     # print(i)
+#     if(valsplit):
+#         random.shuffle(tweets)
+#         val = tweets[:valsplit]
+#         train = tweets[valsplit:]
+#         return train, val
+#     return tweets, []
+
+
 def read_file(fn, valsplit=None):
     tweets = []
     with open(fn, 'r') as json_data:
         data = json.load(json_data)
     # i = 0
+    # data = data.encode('utf-8')
+    
     for tweet in data:
-        src_tweet = tweet['input']
-        tgt_tweet = tweet['output']
-        ind = tweet['index']
+        src_tweet = tweet['raw']
+        tgt_tweet = tweet['original']
+        ind = tweet['id']
         tid = tweet['tid']
         tweets.append(Tweet(src_tweet, tgt_tweet, tid, ind))
     #     if(len(src_tweet) != len(tgt_tweet)):
@@ -309,4 +380,3 @@ def read_file(fn, valsplit=None):
         train = tweets[valsplit:]
         return train, val
     return tweets, []
-
