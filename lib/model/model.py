@@ -104,9 +104,11 @@ class Seq2Seq(nn.Module):
         tgt, tgt_lens = batch['tgt']
         src, src_lens = batch['src']
         batch_size = src.size(1)
+        # print('Day la tgt.size()[0]: ', tgt.size()[0])
         assert(batch_size == tgt.size(1))
         input_seq = Variable(torch.LongTensor([lib.constants.BOS] * batch_size))
         decoder_outputs = Variable(torch.zeros(self.opt.max_train_decode_len, batch_size, self.decoder.vocab_size))
+        # print('len cua decoder: ', len(decoder_outputs))
         if self.opt.cuda: input_seq, decoder_outputs = input_seq.cuda(), decoder_outputs.cuda()
         max_tgt_len = tgt.size()[0]
         encoder_outputs, encoder_hidden = self.encoder(src, src_lens.data.tolist())

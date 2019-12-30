@@ -7,12 +7,14 @@ import json
 import copy
 from pyvi import ViTokenizer
 import io
+import re 
 class DataLoader(object):
     def __init__(self, tweets, vocab, mappings, opt):
         self.opt = opt
         self.prox_arr = self.get_prox_keys()
         self.change_sign = self.get_change_sign()
         self.repleace_character = self.get_repleace_character()
+        self.phonology_vietnamese = self.get_phonology_vietnamese()
         self.mappings = mappings if mappings else {}
         self.tweets, self.source_vocab, self.target_vocab = self.load_data(tweets)
         if(vocab):
@@ -82,13 +84,21 @@ class DataLoader(object):
         #for test the mappings are predefined and for all other inputs except word level we dont need them, so no updates
         update_mappings = not self.mappings and self.opt.input=='word'
         word_tweets = []
+        regex  = re.compile(ur"^[aàảãáạăằẳẵắặâầẩẫấậbcdđeèẻẽéẹêềểễếệfghiìỉĩíịjklmnoòỏõóọôồổỗốộơờởỡớợpqrstuùủũúụưừửữứựvwxyỳỷỹýỵz0123456789_]+$",re.UNICODE)
         for tweet in tweets:
             inp_i, pos_i = processor.run(tweet.input,self.opt.lowercase)
             inp_o, pos_o = processor.run(tweet.output, self.opt.lowercase)
-
             if(self.opt.input == 'spelling'): #character model word2word corrections
                 for iword, oword in zip(inp_i, inp_o):
-                    if iword and oword and iword.isalnum() and oword.isalnum():
+                    # iword = iword.encode('ascii','ignore')
+                    # oword = oword.encode('ascii','ignore')
+                    # iword = iword.encode('utf-8')
+                    # oword = oword.encode('utf-8')
+                                    # print('len cua word',len(iword))
+                                    # print('word ',iword)
+                    match1 = re.search(regex,iword)
+                    match2 = re.search(regex,oword)
+                    if iword and oword and match1 and match2:
                         if iword == oword and len(iword)>1 and len(oword)>1 and not any(c.isdigit() for c in iword) and  not any(c.isdigit() for c in oword):
                             if random.random() > 0.9 and not self.opt.data_augm:
                                 continue
@@ -102,6 +112,8 @@ class DataLoader(object):
                             if random.random() > (1 - self.opt.noise_ratio):
                                 if iword == oword and len(iword)>1 and len(oword)>1 and not any(c.isdigit() for c in iword) and  not any(c.isdigit() for c in oword):
                                     iword = self.add_noise(iword)
+                                    # aa_aa = iword
+                                    # print('word sau khi add noise', unichr(int(aa_aa,16)))
                                     if(iword == '' or iword == ' '):
                                         continue
                                     iwordv, owordv = self.vector_repr(iword, oword, update_mappings)
@@ -118,7 +130,6 @@ class DataLoader(object):
                 tweet.set_input(inp_i)
                 tweet.set_output(inp_o)
                 word_tweets.append(tweet)
-
         # print(source_vocab.vocab)
         tweets = word_tweets
         # print(tweets)
@@ -134,6 +145,7 @@ class DataLoader(object):
         source_vocab.makeLabelToIdx()
         target_vocab.makeVocabulary(self.opt.vocab_size)
         target_vocab.makeLabelToIdx()
+
         # for i in source_vocab.vocab:
         #     print(source_vocab.vocab[i])
         # print("---------")
@@ -147,6 +159,7 @@ class DataLoader(object):
         # print(source_vocab.idx_to_label[1])
         # # print(target_vocab.idx_to_label)
         # print(len(source_vocab.idx_to_label))
+
         if(self.opt.share_vocab):
             assert source_vocab.idx_to_label == target_vocab.idx_to_label
         return tweets, source_vocab, target_vocab
@@ -164,17 +177,31 @@ class DataLoader(object):
             7) nhung chu cai co phat am giong nhau
             8)
         """
+        # try:
+        #     unicode(word, "ascii")
+        # except UnicodeError:
+        #     word = unicode(word, "utf-8")
+        # word = google.searchGoogle(word).encode("utf-8")
+        # word = word.decode('uft-8')
+        # print(type(word)) % unicode
+        # for i in word:
+        #     print(i)
+        # print('')
+        # word = word.encode('ascii','ignore')
+        # print('len cua word',len(word))
+        # print('word ',word)
         i = random.randint(0,len(word)-1)
-        op = random.randint(0, 13)
+        op = random.randint(0, 30)
         if op == 0:
             return word[:i] + word[i+1:]
         if op == 1:
             i += 1
             return word[:i-1] + word[i:i+1] + word[i-1:i] + word[i+1:]
         if op == 2:
-            l =word[:-1]
-            if l == 'u' or l == 'y' or l == 's' or l == 'r' or l == 'a' or l == 'o' or l == 'i':
-                return word + random.randint(1, 5) * l
+            # l =word[:-1]
+            # if l == 'u' or l == 'y' or l == 's' or l == 'r' or l == 'a' or l == 'o' or l == 'i':
+            #     return word + random.randint(1, 5) * l
+            return word # ko lam gi 
         if op == 3:
             a = word.find('a')
             e = word.find('e')
@@ -196,11 +223,80 @@ class DataLoader(object):
             idx = word.find("'")
             if idx != -1:
                 return word[:idx] + word[idx+1:]
-        if op == 7:
-            return word[:i] + random.choice(self.repleace_character[word[i]]) + word[i+1:] # thay doi dau
-        if op == 8:
-            return word[:i] + random.choice(self.change_sign[word[i]]) + word[i+1:]
-        return word[:i] + random.choice(self.prox_arr[word[i]]) + word[i+1:]  #default is keyboard errors
+        if op == 7 or op == 8:
+            try:
+                # print(op)
+                return word[:i] + random.choice(self.repleace_character[word[i]]) + word[i+1:] # thay doi dau
+            except:
+                return word
+            # if not bool(self.repleace_character[word[i]]):
+            #     return word
+            # 
+        if op == 9 or op == 10:
+            try:
+                return word[:i] + random.choice(self.change_sign[word[i]]) + word[i+1:]
+            except:
+                return word
+            # if not bool(self.change_sign[word[i]]):
+            #     return word
+        if op == 11 or op == 12 or op == 13 or op == 14 or op == 15 or op == 16 or op == 17 or op == 18 or op == 19 or op == 20 or op == 21 or op == 22 or \
+            op == 23 or op == 24 or op == 25 or op == 26 or op == 27 or op == 28:
+            if len(word) - 1 - i == 4:
+                try:
+                    # print('word truoc khi add noise', word)
+                    return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]+word[i+3]+word[i+1]+word[i+4]] + word[i+1:]
+                except:
+                    return word
+                # if not bool(self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]+word[i+3]+word[i+1]+word[i+4]]):
+                    # return word
+            elif len(word) - 1 - i == 3:
+                try:
+                    # print('word truoc khi add noise', word)
+                    return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]] + word[i+1:]
+                except:
+                    return word
+                # if not bool(self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]]):
+                #     return word  
+            elif len(word) - 1 - i == 2:
+                try:                    
+                    # print('word satruoc khi add noise', word)
+                    return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]] + word[i+1:]
+                except :
+                    return word
+        try:
+            return word[:i] + random.choice(self.prox_arr[word[i]]) + word[i+1:] #default is keyboard errors
+        except :
+            # print(word)
+            return word
+        
+    def get_phonology_vietnamese(self):
+        phonology_vietnamese = {}
+        phonology_vietnamese['inh'] = ['in']
+        phonology_vietnamese['ênh'] = ['ên']
+        phonology_vietnamese['êch'] = ['ết']
+        phonology_vietnamese['ich'] = ['ít']
+        phonology_vietnamese['ăng'] = ['ăn']
+        phonology_vietnamese['ang'] = ['an']
+        phonology_vietnamese['âng'] = ['ân']
+        phonology_vietnamese['ưng'] = ['ưn']
+        phonology_vietnamese['ông'] = ['ôn']
+        phonology_vietnamese['ung'] = ['un']
+        phonology_vietnamese['iêc'] = ['iêt']
+        phonology_vietnamese['ước'] = ['ươt']
+        phonology_vietnamese['uôc'] = ['uôt']
+
+        phonology_vietnamese['iêng'] = ['iên']
+        phonology_vietnamese['ương'] = ['ươn']
+        phonology_vietnamese['uông'] = ['uôn']
+
+        phonology_vietnamese['ăc'] = ['ắt']
+        phonology_vietnamese['ac'] = ['at']
+        phonology_vietnamese['âc'] = ['ât']
+        phonology_vietnamese['ưc'] = ['ưt']
+        phonology_vietnamese['ôc'] = ['ôt']
+        phonology_vietnamese['uc'] = ['ut']
+        return phonology_vietnamese
+
 
     def get_change_sign(self):
         """
@@ -213,11 +309,64 @@ class DataLoader(object):
         """
         sign_ = {}
         sign_['a'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['à'] = ['a', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['á'] = ['à', 'a', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['â'] = ['à', 'á', 'a', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['ã'] = ['à', 'á', 'â', 'a', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['ạ'] = ['à', 'á', 'â', 'ã', 'a', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['ả'] = ['à', 'á', 'â', 'ã', 'ạ', 'a', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['ấ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'a', 'ầ', 'ậ', 'ắ', 'ặ']
+        sign_['ầ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'a', 'ậ', 'ắ', 'ặ']
+        sign_['ậ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'a', 'ắ', 'ặ']
+        sign_['ă'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'ặ']
+        sign_['ặ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'a']
         sign_['e'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['è'] = ['e', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['é'] = ['è', 'e', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['ê'] = ['è', 'é', 'e', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['ẹ'] = ['è', 'é', 'ê', 'e', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['ẻ'] = ['è', 'é', 'ê', 'ẹ', 'e', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['ẽ'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'e', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['ế'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'e', 'ề', 'ể', 'ễ', 'ệ']
+        sign_['ề'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'e', 'ể', 'ễ', 'ệ']
+        sign_['ể'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'e', 'ễ', 'ệ']
+        sign_['ễ'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'e', 'ệ']
+        sign_['ệ'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'e']
         sign_['i'] = ['ì', 'í', 'ỉ', 'ị']
+        sign_['ì'] = ['i', 'í', 'ỉ', 'ị']
+        sign_['í'] = ['ì', 'i', 'ỉ', 'ị']
+        sign_['ỉ'] = ['ì', 'í', 'i', 'ị']
+        sign_['ị'] = ['ì', 'í', 'ỉ', 'i']
         sign_['o'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ò'] = ['o', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ó'] = ['ò', 'o', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ô'] = ['ò', 'ó', 'o', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['õ'] = ['ò', 'ó', 'ô', 'o', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ọ'] = ['ò', 'ó', 'ô', 'õ', 'o', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ỏ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'o', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ố'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'o', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ồ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'o', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ổ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'o', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ộ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'o', 'ớ', 'ờ', 'ỡ', 'ợ']
+        sign_['ớ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'o', 'ờ', 'ỡ', 'ợ']
+        sign_['ờ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'o', 'ỡ', 'ợ']
+        sign_['ỡ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'o', 'ợ']
+        sign_['ợ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'o']
         sign_['u'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+        sign_['ù'] = ['u', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+        sign_['ú'] = ['ù', 'u', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+        sign_['ụ'] = ['ù', 'ú', 'u', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+        sign_['ủ'] = ['ù', 'ú', 'ụ', 'u', 'ứ', 'ừ', 'ữ', 'ự']
+        sign_['ứ'] = ['ù', 'ú', 'ụ', 'ủ', 'u', 'ừ', 'ữ', 'ự']
+        sign_['ừ'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'u', 'ữ', 'ự']
+        sign_['ữ'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'u', 'ự']
+        sign_['ự'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'u']
         sign_['y'] = ['ý', 'ỳ', 'ỵ', 'ỷ']
+        sign_['ý'] = ['y', 'ỳ', 'ỵ', 'ỷ']
+        sign_['ỳ'] = ['ý', 'y', 'ỵ', 'ỷ']
+        sign_['ỵ'] = ['ý', 'ỳ', 'y', 'ỷ']
+        sign_['ỷ'] = ['ý', 'ỳ', 'ỵ', 'y']
+        sign_['_'] = ['_']
         return sign_
 
     def get_repleace_character(self):
@@ -236,6 +385,7 @@ class DataLoader(object):
         repleace_character['q'] = ['c', 'k']
         repleace_character['i'] = ['y']
         repleace_character['y'] = ['i']
+        repleace_character['_'] = ['_']
         return repleace_character
         
     def get_prox_keys(self):
@@ -276,6 +426,7 @@ class DataLoader(object):
         array_prox['8'] = ['u', 'i', 'o']
         array_prox['9'] = ['i', 'o', 'p']
         array_prox['0'] = ['o', 'p']
+        array_prox['_'] = ['_']
         return array_prox
 
 
@@ -364,7 +515,7 @@ def read_file(fn, valsplit=None):
         data = json.load(json_data)
     # i = 0
     # data = data.encode('utf-8')
-    
+
     for tweet in data:
         src_tweet = tweet['raw']
         tgt_tweet = tweet['original']

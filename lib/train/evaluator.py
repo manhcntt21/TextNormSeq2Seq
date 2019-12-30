@@ -91,8 +91,8 @@ class Evaluator(object):
         with codecs.open(pred_file, "w", 'utf-8') as f:
             f.write(json.dumps(json_entries, ensure_ascii=False))
             # json.dumps(json_entries, f,ensure_ascii=False)
-        with open(pred_file+".csv", "w") as f:
-            tsvfile = csv.writer(f, delimiter='\t')
-            tsvfile.writerow(["ixdex", "score", "output", "input", "target"])
-            for x in json_entries:
-                tsvfile.writerow([x["index"],x["score"],x["output"],x["input"],x["target"]])
+        # with codecs.open(pred_file+".csv", "w", 'utf-8') as f:
+        #     tsvfile = csv.writer(f, delimiter='\t')
+        #     tsvfile.writerow(["ixdex", "score", "output", "input", "target"])
+        #     for x in json_entries:
+        #         tsvfile.writerow([x["index"],x["score"],x["output"].encode('utf-8'),x["input"].encode('utf-8'),x["target"].encode('utf-8')])
