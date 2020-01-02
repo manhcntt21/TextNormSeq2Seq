@@ -102,3 +102,7 @@ Remove the flag `-logfolder` to output to console.
 
 *Also, checkout [MoNoise](https://bitbucket.org/robvanderg/monoise) for a non-DL SoTA model.*
 
+#### install torch with python
+
+conda install pytorch==1.3.1 torchvision==0.4.2 cuda100 -c pytorch, processing with ascii
+

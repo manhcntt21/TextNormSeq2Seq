@@ -7,7 +7,8 @@ import json
 import copy
 from pyvi import ViTokenizer
 import io
-import re 
+import re
+import os 
 class DataLoader(object):
     def __init__(self, tweets, vocab, mappings, opt):
         self.opt = opt
@@ -84,7 +85,7 @@ class DataLoader(object):
         #for test the mappings are predefined and for all other inputs except word level we dont need them, so no updates
         update_mappings = not self.mappings and self.opt.input=='word'
         word_tweets = []
-        regex  = re.compile(ur"^[aàảãáạăằẳẵắặâầẩẫấậbcdđeèẻẽéẹêềểễếệfghiìỉĩíịjklmnoòỏõóọôồổỗốộơờởỡớợpqrstuùủũúụưừửữứựvwxyỳỷỹýỵz0123456789_]+$",re.UNICODE)
+        regex  = re.compile(r"^[aàảãáạăằẳẵắặâầẩẫấậbcdđeèẻẽéẹêềểễếệfghiìỉĩíịjklmnoòỏõóọôồổỗốộơờởỡớợpqrstuùủũúụưừửữứựvwxyỳỷỹýỵz0123456789_]+$",re.UNICODE)
         for tweet in tweets:
             inp_i, pos_i = processor.run(tweet.input,self.opt.lowercase)
             inp_o, pos_o = processor.run(tweet.output, self.opt.lowercase)
@@ -130,6 +131,14 @@ class DataLoader(object):
                 tweet.set_input(inp_i)
                 tweet.set_output(inp_o)
                 word_tweets.append(tweet)
+
+        ## store word_tweet 
+        with open("word_tweet.json", "w") as outfile:
+            for line in word_tweets:
+                outfile.write(str(line))
+                outfile.write('\n')
+        # print(word_tweets[0])
+        # print(len(word_tweets))
         # print(source_vocab.vocab)
         tweets = word_tweets
         # print(tweets)
@@ -197,72 +206,73 @@ class DataLoader(object):
         if op == 1:
             i += 1
             return word[:i-1] + word[i:i+1] + word[i-1:i] + word[i+1:]
-        if op == 2:
-            # l =word[:-1]
-            # if l == 'u' or l == 'y' or l == 's' or l == 'r' or l == 'a' or l == 'o' or l == 'i':
-            #     return word + random.randint(1, 5) * l
-            return word # ko lam gi 
-        if op == 3:
-            a = word.find('a')
-            e = word.find('e')
-            i = word.find('i')
-            o = word.find('o')
-            u = word.find('u')
-            idx = max([a,e,i,o,u])
-            if idx != -1:
-                return word[:idx] +  random.randint(1, 5) * word[idx] + word[idx:]
-        if op == 4:
-            idx = word.find("'")
-            if idx != -1:
-                return word[:idx] + word[idx+1:] + word[idx]
-        if op == 5:
-            idx = word.find("'")
-            if idx != -1:
-                return word[:idx-1] + word[idx:idx+1] + word[idx-1:idx] + word[idx+1:]
-        if op == 6:
-            idx = word.find("'")
-            if idx != -1:
-                return word[:idx] + word[idx+1:]
-        if op == 7 or op == 8:
+        # if op == 2:
+        #     # l =word[:-1]
+        #     # if l == 'u' or l == 'y' or l == 's' or l == 'r' or l == 'a' or l == 'o' or l == 'i':
+        #     #     return word + random.randint(1, 5) * l
+        #     return word # ko lam gi 
+        # if op == 3:
+        #     a = word.find('a')
+        #     e = word.find('e')
+        #     i = word.find('i')
+        #     o = word.find('o')
+        #     u = word.find('u')
+        #     idx = max([a,e,i,o,u])
+        #     if idx != -1:
+        #         return word[:idx] +  random.randint(1, 5) * word[idx] + word[idx:]
+        # if op == 4:
+        #     idx = word.find("'")
+        #     if idx != -1:
+        #         return word[:idx] + word[idx+1:] + word[idx]
+        # if op == 5:
+        #     idx = word.find("'")
+        #     if idx != -1:
+        #         return word[:idx-1] + word[idx:idx+1] + word[idx-1:idx] + word[idx+1:]
+        # if op == 6:
+        #     idx = word.find("'")
+        #     if idx != -1:
+        #         return word[:idx] + word[idx+1:]
+        if op == 2 or op == 3:
             try:
                 # print(op)
+                print(self.repleace_character[word[i]])
                 return word[:i] + random.choice(self.repleace_character[word[i]]) + word[i+1:] # thay doi dau
             except:
                 return word
             # if not bool(self.repleace_character[word[i]]):
             #     return word
             # 
-        if op == 9 or op == 10:
-            try:
-                return word[:i] + random.choice(self.change_sign[word[i]]) + word[i+1:]
-            except:
-                return word
+        # if op == 5 or op == 6:
+        #     try:
+        #         return word[:i] + random.choice(self.change_sign[word[i]]) + word[i+1:]
+        #     except:
+        #         return word
             # if not bool(self.change_sign[word[i]]):
             #     return word
-        if op == 11 or op == 12 or op == 13 or op == 14 or op == 15 or op == 16 or op == 17 or op == 18 or op == 19 or op == 20 or op == 21 or op == 22 or \
-            op == 23 or op == 24 or op == 25 or op == 26 or op == 27 or op == 28:
-            if len(word) - 1 - i == 4:
-                try:
-                    # print('word truoc khi add noise', word)
-                    return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]+word[i+3]+word[i+1]+word[i+4]] + word[i+1:]
-                except:
-                    return word
-                # if not bool(self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]+word[i+3]+word[i+1]+word[i+4]]):
-                    # return word
-            elif len(word) - 1 - i == 3:
-                try:
-                    # print('word truoc khi add noise', word)
-                    return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]] + word[i+1:]
-                except:
-                    return word
-                # if not bool(self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]]):
-                #     return word  
-            elif len(word) - 1 - i == 2:
-                try:                    
-                    # print('word satruoc khi add noise', word)
-                    return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]] + word[i+1:]
-                except :
-                    return word
+        # if op == 11 or op == 12 or op == 13 or op == 14 or op == 15 or op == 16 or op == 17 or op == 18 or op == 19 or op == 20 or op == 21 or op == 22 or \
+        #     op == 23 or op == 24 or op == 25 or op == 26 or op == 27 or op == 28:
+        #     if len(word) - 1 - i == 4:
+        #         try:
+        #             # print('word truoc khi add noise', word)
+        #             return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]+word[i+3]+word[i+1]+word[i+4]] + word[i+1:]
+        #         except:
+        #             return word
+        #         # if not bool(self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]+word[i+3]+word[i+1]+word[i+4]]):
+        #             # return word
+        #     elif len(word) - 1 - i == 3:
+        #         try:
+        #             # print('word truoc khi add noise', word)
+        #             return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]] + word[i+1:]
+        #         except:
+        #             return word
+        #         # if not bool(self.phonology_vietnamese[word[i]+word[i+1]+word[i+2]]):
+        #         #     return word  
+        #     elif len(word) - 1 - i == 2:
+        #         try:                    
+        #             # print('word satruoc khi add noise', word)
+        #             return word[:i] + self.phonology_vietnamese[word[i]+word[i+1]] + word[i+1:]
+        #         except :
+        #             return word
         try:
             return word[:i] + random.choice(self.prox_arr[word[i]]) + word[i+1:] #default is keyboard errors
         except :
@@ -299,14 +309,6 @@ class DataLoader(object):
 
 
     def get_change_sign(self):
-        """
-            # sign['a'] = ['\xc3\xa0', '\xc3\xa1', '\xc3\xa2', '\xc3\xa3', '\xe1\xba\xa1', '\xe1\xba\xa3', '\xe1\xba\xa5', '\xe1\xba\xa5', '\xe1\xba\xad', '\xe1\xba\xaf', '\xe1\xba\xb7'] # a à á â ã ạ ả ấ  ầ  ậ ắ  ặ 
-            # sign['e'] = ['\xc3\xa8', '\xc3\xa9', '\xc3\xaa', '\xe1\xba\xb9' , '\xe1\xba\xbb', '\xe1\xba\xbd', '\xe1\xba\xbf', '\xe1\xbb\x81', '\xe1\xbb\x83', '\xe1\xbb\x85',' \xe1\xbb\x87'] # è é ê  ẹ ẻ ẽ ế  ề  ể  ễ  ệ 
-            # sign['i'] = ['\xc3\xac', '\xc3\xad', '\xe1\xbb\x89', '\xe1\xbb\x8b'] # ì í ỉ ị 
-            # sign['o'] = ['\xc3\xb2', '\xc3\xb3', '\xc3\xb4', '\xc3\xb5', '\xe1\xbb\x8d', '\xe1\xbb\x8f', '\xe1\xbb\x91', '\xe1\xbb\x93', '\xe1\xbb\x95' , '\xe1\xbb\x97', '\xe1\xbb\x99', '\xe1\xbb\x9b', '\xe1\xbb\x9d', '\xe1\xbb\x9f', '\xe1\xbb\xa1', '\xe1\xbb\xa3'] # ò ó ô  õ ọ ỏ  ố ồ  ổ ộ ớ ờ ỡ ợ 
-            # sign['u'] = ['\xc3\xb9', '\xc3\xba', '\xe1\xbb\xa5', '\xe1\xbb\xa7', '\xe1\xbb\xa9', '\xe1\xbb\xab', '\xe1\xbb\xad', '\xe1\xbb\xaf', '\xe1\xbb\xb1'] # ù ú ụ ủ ứ ừ ữ ự 
-            # sign['y'] = ['\xc3\xbd', '\xe1\xbb\xb3', '\xe1\xbb\xb5', '\xe1\xbb\xb7']  # ý ỳ ỵ ỷ 
-        """
         sign_ = {}
         sign_['a'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
         sign_['à'] = ['a', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
@@ -371,15 +373,15 @@ class DataLoader(object):
 
     def get_repleace_character(self):
         repleace_character = {}
-        repleace_character['ch'] = ['tr']
-        repleace_character['tr'] = ['ch']
+        # repleace_character['ch'] = ['tr']
+        # repleace_character['tr'] = ['ch']
         repleace_character['l'] = ['n']
         repleace_character['n'] = ['l']
         repleace_character['x'] = ['s']
         repleace_character['s'] = ['x']
         repleace_character['r'] = ['d', 'gi']
         repleace_character['d'] = ['r', 'gi']
-        repleace_character['gi'] = ['d', 'r']
+        # repleace_character['gi'] = ['d', 'r']
         repleace_character['c'] = ['q', 'k']
         repleace_character['k'] = ['q', 'c']
         repleace_character['q'] = ['c', 'k']
@@ -428,7 +430,6 @@ class DataLoader(object):
         array_prox['0'] = ['o', 'p']
         array_prox['_'] = ['_']
         return array_prox
-
 
 
 def create_data(data, opt, vocab=None, mappings=None):

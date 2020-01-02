@@ -74,7 +74,7 @@ def handle_unk(input, input_words, pred_words, unk_model,unkowns_file=None):
                         confidence = probs.transpose()[0].max()
                         translation = translation.t().tolist()
                         trsl2wrds = lib.metric.to_words(translation, unk_model.encoder.vocab)
-                        if unkowns_file: unkowns_file.writerow([input_words_tokens[i], ''.join(trsl2wrds[0]), confidence])
+                        if unkowns_file: unkowns_file.writerow([input_words_tokens[i], ''.join(trsl2wrds[0]).encode('utf-8'), confidence])
                         pred_tokens[i] = ''.join(trsl2wrds[0]) if confidence > 50.0 and input_words_tokens[i].isalpha()  else input_words_tokens[i] 
                         if input_words_tokens[i]!=pred_tokens[i]: logger.info('secondary model confidence:{}, unk_word:{}, prediction:{}'.format(confidence, input_words_tokens[i], pred_tokens[i]))
             ret.append(pred_tokens)

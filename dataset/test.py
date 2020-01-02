@@ -60,6 +60,8 @@ from sklearn.model_selection import train_test_split
 from pyvi import ViTokenizer, ViPosTagger
 import random
 import re
+import copy 
+
 def convert(fn1,fn2,fn3):
 	"""
 		loc cac item rieng ra tung loai
@@ -133,7 +135,9 @@ def merge_data_save(f1,f2,f3,f4,f5,f6,f7,f8):
 	split_token_json(f5,data1,data2)
 	split_token_json(f6,data1,data2)
 
-	fillter_number_d_underscore(data1) # chi filter data chuan 
+	fillter_number_d_underscore(data1) # chi filter data chuan
+	add_noise_sequen(data1) # add_noise
+
 	with open(f7, 'w') as outfile:
 			json.dump(data1, outfile, ensure_ascii=False)
 			# outfile.write(',\n')
@@ -215,7 +219,6 @@ def random_10_sequence(number):
 		print(data1[i]['id'])
 		print('edit raw  ')
 		print(data1[i]['raw'])
-    
 def fillter_number_d_underscore(data1):
 	"""
 		loc string co chua so:
@@ -266,8 +269,6 @@ def fillter_number_d_underscore(data1):
 						data1[i]['raw'][tmp] = data1[i]['raw'][tmp][:index_underscore] + data1[i]['raw'][tmp][index_underscore+1:]
 	# with open(path+'test.json', 'w') as outfile:
 	# 		json.dump(data1, outfile, ensure_ascii=False)
-
-
 def get_change_sign(word):
     """
         # sign['a'] =  # a à á â ã ạ ả ấ  ầ  ậ ắ  ặ 
@@ -363,6 +364,7 @@ def get_repleace_character(word):
     except:
         return word
 def exchange_2_character(word):
+
 	"""
 		truong hop dau vao 2 ki tu
 		photology + replace_character
@@ -405,6 +407,7 @@ def exchange_3_character(word):
 	except:
 		return word
 def exchange_4_character(word):
+
 	"""
 		truong hop dau vao 3 ki tu
 		photology
@@ -460,11 +463,10 @@ def get_prox_keys(word):
         return array_prox[word]
     except:
         return word
-def add_noise(word):
-	#i = random.randint(0, len(word) -1 )
+def add_noise(word,op):
+	i = random.randint(0, len(word) -1 )
 	#op = random.randint(0,30)
-	op = 8
-	i  = 1
+	# i  = 1
 	if op == 0:
 		return word[:i] + word[i+1:]
 
@@ -484,25 +486,26 @@ def add_noise(word):
 		return word[:i] + random.choice(get_repleace_character(word[i])) + word[i+1:]
 		# thieu truong hop, dau vao 2 ki tu
 	if op == 5:
-		return word[:i] + random.choise(get_change_sign(word[i])) + word[i+1:]
+		return word[:i] + random.choice(get_change_sign(word[i])) + word[i+1:]
 		# da du
 	if op == 6:
 		#  truong hop, dau vao 2 
 		if i <= len(word) - 2:
-			return word[:i] + random.choise(exchange_2_character(word[i]+word[i+1])) + word[i+2:]
+			return word[:i] + random.choice(exchange_2_character(word[i]+word[i+1])) + word[i+2:]
 	if op == 7:
 		# truong hop dau vao 3 
 		if i <= len(word) - 3:
-			return word[:i] + random.choise(exchange_3_character(word[i]+word[i+1]+word[i+2])) + word[i+3:]
+			return word[:i] + random.choice(exchange_3_character(word[i]+word[i+1]+word[i+2])) + word[i+3:]
 	if op == 8:
 		# truong hop 4 ki tu, dau vao
 		if i <= len(word) - 4:
 			return word[:i] + exchange_4_character(word[i]+word[i+1]+word[i+2] + word[i+3]) + word[i+4:]
 	# ban phim
-	return word[:i] + get_prox_keys(word[i]) + word[i+1:]
-
-
-def add_noise_sequen(data):
+	try:
+		return word[:i] + random.choice(get_prox_keys(word[i])) + word[i+1:]
+	except	:
+		return word
+def add_noise_sequen(data1):
 	"""
 		chay ham nay khi da chay filter_number_d_underscore
 	"""
@@ -512,20 +515,50 @@ def add_noise_sequen(data):
 	d = ["BOOK","CALS", "DIAL", "NEWS", "STORS", "DIAL2"]
 	f = ['train_data.json','test_data.json','tran_violation.json','test_violation.json']
 	path = './data/'
-	data1 = []
-	with open(path+'train_tiny.json','r') as outfile:
-		data1 = json.load(outfile)
+	# data1 = []
+	data2 = [] # noise tao ra
+	regex1 = re.compile("\S*\d+\S*",re.UNICODE)
+	# with open(path+'train_tiny.json','r') as outfile:
+	# 	data1 = json.load(outfile)
+	# co 9 loai loi
+	error = [0,1,2,3,4,5,6,7,8,9]
+	sequence = [1,2,3]
+	index = 0
+	for i in range(len(data1)):
+		m = random.random()
+		# print('-------------------------------1-----------------------------------')
+		# print(data1[i]['raw'])
+		# print(data1[i]['original'])
+		if m > 0.3: # xac suat chon cau de them nhieu
+			# print('before = ',data1[i]['id'])
+			n_quence = random.choice(sequence)
+			for j in range(n_quence):
+				n_error = random.randint(0,30)*len(data1[i]['original'])/100
+				tmp = copy.deepcopy(data1[i])
+				data2.append(tmp)
+				# print(j)
+				data2[index]['id'] = data2[index]['id'] + str(j) 
+				# print('after = ',data2[index]['id'])
+				for j1 in range(int(n_error)):
+					# print(len(data1[i]['original']))
+					n = random.randint(0, len(data2[index]['original']) - 1)
+					word = data2[index]['original'][n]
+					if not re.search(regex1,word): # so thi loai
+						op = random.choice(error)
+						word = add_noise(word,op)
+						data2[index]['raw'][n] = word
+				# print('<<<<noise>>>>>')
+				# print(data2[index]['raw'])
+				# print(data2[index]['original'])
+				index+=1
+		# print('-------------------------------2-----------------------------------')
 
-	for i in len(data1):
-		
+	for i in range(len(data2)):
+		data1.append(data2[i])
+	# with open(path + fileout, 'w') as outfile:
+	# 	json.dump(data1, outfile, ensure_ascii=False)
 
-
-
-
-
-if __name__ == '__main__':
-
-
+def create_tiny():
 	a = ['data_book.json', 'data_cals.json','data_dial.json', 'data_news.json', 'data_stors.json','data_dial2.json']
 	b = ['train_book.json', 'train_cals.json','train_dial.json', 'train_news.json', 'train_stors.json', 'train_dial2.json']
 	c = ['test_book.json', 'test_cals.json','test_dial.json', 'test_news.json', 'test_stors.json', 'test_dial2.json']
@@ -534,26 +567,39 @@ if __name__ == '__main__':
 	path = './data/'
 	data1 = []
 	data2 = []
-	# split_token_json(path+c[0],data1,data2)
-	# split_token_json(f2,data1,data2)
-	# split_token_json(f3,data1,data2)
-	# split_token_json(f4,data1,data2)
-	# split_token_json(f5,data1,data2)
-	# split_token_json(f6,data1,data2)
+
+	split_token_json(path+b[0],data1,data2)
+	fillter_number_d_underscore(data1) # chi filter data chuan 
+	add_noise_sequen(data1)
+	with open(path+f[4], 'w') as outfile:
+			json.dump(data1, outfile, ensure_ascii=False)
+
+	split_token_json(path+c[0],data1,data2)
+	fillter_number_d_underscore(data1) # chi filter data chuan 
+	add_noise_sequen(data1)
+	with open(path+f[5], 'w') as outfile:
+			json.dump(data1, outfile, ensure_ascii=False)
+
+if __name__ == '__main__':
+
+	# result()
+	random_10_sequence(10)
 
 
 
-	# fillter_number_d_underscore(data1) # chi filter data chuan 
-	# with open(path+f[5], 'w') as outfile:
-	# 		json.dump(data1, outfile, ensure_ascii=False)
+
+
+
 
 
 			# outfile.write(',\n')
 	# with open(path+f[5], 'w') as outfile:
 	# 		json.dump(data2, outfile, ensure_ascii=False)   
 
-	# result()
-	random_10_sequence(10)
+
+
+
+
 	#ghv = get_phonology_vietnamese('')
 	#gs = random.choice(get_change_sign('u'))
 	#gc = random.choice(get_repleace_character('ch'))

@@ -5,7 +5,7 @@ import logging
 import os
 import copy
 import lib
-
+from pyvi import ViTokenizer
 logger = logging.getLogger("main")
 
 def train_char_model(args):
@@ -33,20 +33,20 @@ def train_char_model(args):
             print('Prediction is: {}'.format(''.join(prediction)))
     elif opt.eval: # Evaluation only
         logger.info("=======Char eval on test set=============")
-        pred_file = os.path.join(opt.save_dir, 'test.pred.char')
-        char_test_evaluator.eval(test_data, pred_file=pred_file)
-        logger.info("=======Char eval on validation set=============")
-        pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
-        char_evaluator.eval(valid_data, pred_file=pred_file)
+        # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
+        # char_test_evaluator.eval(test_data, pred_file=pred_file)
+        # logger.info("=======Char eval on validation set=============")
+        # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
+        # char_evaluator.eval(valid_data, pred_file=pred_file)
     else: # Training
-        char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt)
-        char_trainer.train(opt.start_epoch, opt.end_epoch)
-        logger.info("=======Eval on test set=============")
-        pred_file = os.path.join(opt.save_dir, 'test.pred.char')
-        char_test_evaluator.eval(test_data, pred_file=pred_file)
-        logger.info("=======Eval on validation set=============")
-        pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
-        char_evaluator.eval(valid_data, pred_file=pred_file)
+        # char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt)
+        # char_trainer.train(opt.start_epoch, opt.end_epoch)
+        # logger.info("=======Eval on test set=============")
+        # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
+        # char_test_evaluator.eval(test_data, pred_file=pred_file)
+        # logger.info("=======Eval on validation set=============")
+        # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
+        # char_evaluator.eval(valid_data, pred_file=pred_file)
         logger.info('*** Finished Character model ***\n')
     return char_model
 
@@ -72,8 +72,9 @@ def main():
     logger.info(model)
     if opt.interactive:
         while True:
-            var = raw_input("Please enter the text to be normalized (q to quit): ")
+            var = input("Please enter the text to be normalized (q to quit): ")
             if var.lower() == 'q': break
+            var = ViTokenizer.tokenize(var)
             tweets = [Tweet(var.split(), var.split(), '1', '1') for i in range(2)] #suboptimal but works with minimal changes
             test_data, test_vocab, mappings = create_data(tweets, opt=opt, vocab=vocab,mappings=mappings)
             prediction = test_evaluator.eval(test_data)
