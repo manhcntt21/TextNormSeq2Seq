@@ -215,37 +215,58 @@ def random_10_sequence(number):
 		print(data1[i]['id'])
 		print('edit raw  ')
 		print(data1[i]['raw'])
+    
+def fillter_number_d_underscore(data1):
+	"""
+		loc string co chua so:
+		vd: so dien thoai
+	"""
+	a = ['data_book.json', 'data_cals.json','data_dial.json', 'data_news.json', 'data_stors.json','data_dial2.json']
+	b = ['train_book.json', 'train_cals.json','train_dial.json', 'train_news.json', 'train_stors.json', 'train_dial2.json']
+	c = ['test_book.json', 'test_cals.json','test_dial.json', 'test_news.json', 'test_stors.json', 'test_dial2.json']
+	d = ["BOOK","CALS", "DIAL", "NEWS", "STORS", "DIAL2"]
+	f = ['train_data.json','test_data.json','tran_violation.json','test_violation.json']
+	path = './data/'
+	# data1 = [] ## train
+	# data2 = [] ## test 
+	regex1 = re.compile("\S*\d+\S*",re.UNICODE)
+	regex = re.compile('\S*_\S*',re.UNICODE)
+	# split_token_json(path+a[0],data1,data2)
+	# split_token_json(path+a[1],data1,data2)
 
-def get_phonology_vietnamese(word):
-    phonology_vietnamese = {}
-    phonology_vietnamese['inh'] = 'in'
-    phonology_vietnamese['ênh'] = 'ên'
-    phonology_vietnamese['êch'] = 'ết'
-    phonology_vietnamese['ich'] = 'ít'
-    phonology_vietnamese['ăng'] = 'ăn'
-    phonology_vietnamese['ang'] = 'an'
-    phonology_vietnamese['âng'] = 'ân'
-    phonology_vietnamese['ưng'] = 'ưn'
-    phonology_vietnamese['ông'] = 'ôn'
-    phonology_vietnamese['ung'] = 'un'
-    phonology_vietnamese['iêc'] = 'iêt'
-    phonology_vietnamese['ước'] = 'ươt'
-    phonology_vietnamese['uôc'] = 'uôt'
+	for i in range(len(data1)):
+		undersocre = {}
+		delete_undersocre = random.random()
+		for j, k in enumerate(data1[i]['original']):
+			if re.search(regex1, k):
+				data1[i]['raw'][j] = '@' +data1[i]['raw'][j]
+			elif re.search(regex, k):
+				index = []
+				for m,n in enumerate(k):   # tach tahnh ky tu
+					if n == '_':
+						index.append(m)
+				if len(index) != 0:
+					undersocre[j] = index
+		if bool(undersocre):
+			# print(undersocre)
+			tmp = random.choice(list(undersocre.keys())) # chon ngau nhien mot tu trong cau
+			# print('word duoc chon = ',tmp)		
+			# print('delete_undersocre = ', delete_undersocre)
+			if delete_undersocre > 0.65 :
+				if len(undersocre[tmp]) == 1:
+					index_underscore = random.choice(undersocre[tmp])  # chon ngau nhien 1 dau cach trong cau
+					# data1[i]['original'][tmp] = data1[i]['original'][tmp][:index_underscore] + data1[i]['original'][tmp][index_underscore+1:]
+					data1[i]['raw'][tmp] = data1[i]['raw'][tmp][:index_underscore] + data1[i]['raw'][tmp][index_underscore+1:]
+				else:	
+					n_index = random.randrange(1,len(undersocre[tmp]),1)
+					for u in range(n_index):
+						index_underscore = random.choice(undersocre[tmp])  # chon ngau nhien 1 dau cach trong cau
+						# print(data1[i]['original'][tmp][index_underscore])
+						# data1[i]['original'][tmp] = data1[i]['original'][tmp][:index_underscore] + data1[i]['original'][tmp][index_underscore+1:]
+						data1[i]['raw'][tmp] = data1[i]['raw'][tmp][:index_underscore] + data1[i]['raw'][tmp][index_underscore+1:]
+	# with open(path+'test.json', 'w') as outfile:
+	# 		json.dump(data1, outfile, ensure_ascii=False)
 
-    phonology_vietnamese['iêng'] = 'iên'
-    phonology_vietnamese['ương'] = 'ươn'
-    phonology_vietnamese['uông'] = 'uôn'
-
-    phonology_vietnamese['ăc'] = 'ắt'
-    phonology_vietnamese['ac'] = 'at'
-    phonology_vietnamese['âc'] = 'ât'
-    phonology_vietnamese['ưc'] = 'ưt'
-    phonology_vietnamese['ôc'] = 'ôt'
-    phonology_vietnamese['uc'] = 'ut'
-    try:
-        return phonology_vietnamese[word]
-    except:
-        return word
 
 def get_change_sign(word):
     """
@@ -316,76 +337,21 @@ def get_change_sign(word):
     sign_['ỵ'] = ['ý', 'ỳ', 'y', 'ỷ']
     sign_['ỷ'] = ['ý', 'ỳ', 'ỵ', 'y']
     sign_['_'] = ['_']
-    sign_[''] = ['']
     try:
         return sign_[word]
     except:
         return word
-    
-
-def fillter_number_d_underscore(data1):
-	"""
-		loc string co chua so:
-		vd: so dien thoai
-	"""
-	a = ['data_book.json', 'data_cals.json','data_dial.json', 'data_news.json', 'data_stors.json','data_dial2.json']
-	b = ['train_book.json', 'train_cals.json','train_dial.json', 'train_news.json', 'train_stors.json', 'train_dial2.json']
-	c = ['test_book.json', 'test_cals.json','test_dial.json', 'test_news.json', 'test_stors.json', 'test_dial2.json']
-	d = ["BOOK","CALS", "DIAL", "NEWS", "STORS", "DIAL2"]
-	f = ['train_data.json','test_data.json','tran_violation.json','test_violation.json']
-	path = './data/'
-	# data1 = [] ## train
-	# data2 = [] ## test 
-	regex1 = re.compile("\S*\d+\S*",re.UNICODE)
-	regex = re.compile('\S*_\S*',re.UNICODE)
-	# split_token_json(path+a[0],data1,data2)
-	# split_token_json(path+a[1],data1,data2)
-
-	for i in range(len(data1)):
-		undersocre = {}
-		delete_undersocre = random.random()
-		for j, k in enumerate(data1[i]['original']):
-			if re.search(regex1, k):
-				data1[i]['raw'][j] = '@' +data1[i]['raw'][j]
-			elif re.search(regex, k):
-				index = []
-				for m,n in enumerate(k):   # tach tahnh ky tu
-					if n == '_':
-						index.append(m)
-				if len(index) != 0:
-					undersocre[j] = index
-		if bool(undersocre):
-			# print(undersocre)
-			tmp = random.choice(list(undersocre.keys())) # chon ngau nhien mot tu trong cau
-			# print('word duoc chon = ',tmp)		
-			# print('delete_undersocre = ', delete_undersocre)
-			if delete_undersocre > 0.65 :
-				if len(undersocre[tmp]) == 1:
-					index_underscore = random.choice(undersocre[tmp])  # chon ngau nhien 1 dau cach trong cau
-					# data1[i]['original'][tmp] = data1[i]['original'][tmp][:index_underscore] + data1[i]['original'][tmp][index_underscore+1:]
-					data1[i]['raw'][tmp] = data1[i]['raw'][tmp][:index_underscore] + data1[i]['raw'][tmp][index_underscore+1:]
-				else:	
-					n_index = random.randrange(1,len(undersocre[tmp]),1)
-					for u in range(n_index):
-						index_underscore = random.choice(undersocre[tmp])  # chon ngau nhien 1 dau cach trong cau
-						# print(data1[i]['original'][tmp][index_underscore])
-						# data1[i]['original'][tmp] = data1[i]['original'][tmp][:index_underscore] + data1[i]['original'][tmp][index_underscore+1:]
-						data1[i]['raw'][tmp] = data1[i]['raw'][tmp][:index_underscore] + data1[i]['raw'][tmp][index_underscore+1:]
-
-	# with open(path+'test.json', 'w') as outfile:
-	# 		json.dump(data1, outfile, ensure_ascii=False)
-
 def get_repleace_character(word):
     repleace_character = {}
-    repleace_character['ch'] = ['tr']
-    repleace_character['tr'] = ['ch']
+
+
     repleace_character['l'] = ['n']
     repleace_character['n'] = ['l']
     repleace_character['x'] = ['s']
     repleace_character['s'] = ['x']
-    repleace_character['r'] = ['d', 'gi']
-    repleace_character['d'] = ['r', 'gi']
-    repleace_character['gi'] = ['d', 'r']
+    repleace_character['r'] = ['d', "gi"]
+    repleace_character['d'] = ['r', "gi"]
+    
     repleace_character['c'] = ['q', 'k']
     repleace_character['k'] = ['q', 'c']
     repleace_character['q'] = ['c', 'k']
@@ -396,7 +362,61 @@ def get_repleace_character(word):
         return repleace_character[word]
     except:
         return word
- 
+def exchange_2_character(word):
+	"""
+		truong hop dau vao 2 ki tu
+		photology + replace_character
+	"""
+	exchange_2_character = {}
+	exchange_2_character['ch'] = ['tr']
+	exchange_2_character['tr'] = ['ch']
+	exchange_2_character['gi'] = ['d', 'r']
+	exchange_2_character['ăc'] = ['ắt']
+	exchange_2_character['ac'] = ['at']
+	exchange_2_character['âc'] = ['ât']
+	exchange_2_character['ưc'] = ['ưt']
+	exchange_2_character['ôc'] = ['ôt']
+	exchange_2_character['uc'] = ['ut']
+	try:
+		return exchange_2_character[word]
+	except:
+		return word
+def exchange_3_character(word):
+	"""
+		truong hop dau vao 3 ki tu
+		photology
+	"""
+	exchange_3_character = {}
+	exchange_3_character['inh'] = 'in'
+	exchange_3_character['ênh'] = 'ên'
+	exchange_3_character['êch'] = 'ết'
+	exchange_3_character['ich'] = 'ít'
+	exchange_3_character['ăng'] = 'ăn'
+	exchange_3_character['ang'] = 'an'
+	exchange_3_character['âng'] = 'ân'
+	exchange_3_character['ưng'] = 'ưn'
+	exchange_3_character['ông'] = 'ôn'
+	exchange_3_character['ung'] = 'un'
+	exchange_3_character['iêc'] = 'iêt'
+	exchange_3_character['ước'] = 'ươt'
+	exchange_3_character['uôc'] = 'uôt'
+	try:
+		return exchange_3_character[word]
+	except:
+		return word
+def exchange_4_character(word):
+	"""
+		truong hop dau vao 3 ki tu
+		photology
+	"""
+	exchange_4_character = {}
+	exchange_4_character['iêng'] = 'iên'
+	exchange_4_character['ương'] = 'ươn'
+	exchange_4_character['uông'] = 'uôn'
+	try:
+		return exchange_4_character[word]
+	except:
+		return word     
 def get_prox_keys(word):
     array_prox = {}
     array_prox['a'] = ['q', 'w', 'z', 'x', 's']
@@ -440,6 +460,68 @@ def get_prox_keys(word):
         return array_prox[word]
     except:
         return word
+def add_noise(word):
+	#i = random.randint(0, len(word) -1 )
+	#op = random.randint(0,30)
+	op = 8
+	i  = 1
+	if op == 0:
+		return word[:i] + word[i+1:]
+
+	if op == 1:
+		i += 1
+		return word[:i-1] + word[i:i+1] + word[i-1:i] + word[i+1:]
+
+	if op == 2:
+		i+=1
+		return word[:i] + '_'+ word[i:] 
+
+	if op == 3:
+		idx = word.find("_")
+		if idx != -1:
+			return word[:i] + word[i+1:];
+	if op == 4:
+		return word[:i] + random.choice(get_repleace_character(word[i])) + word[i+1:]
+		# thieu truong hop, dau vao 2 ki tu
+	if op == 5:
+		return word[:i] + random.choise(get_change_sign(word[i])) + word[i+1:]
+		# da du
+	if op == 6:
+		#  truong hop, dau vao 2 
+		if i <= len(word) - 2:
+			return word[:i] + random.choise(exchange_2_character(word[i]+word[i+1])) + word[i+2:]
+	if op == 7:
+		# truong hop dau vao 3 
+		if i <= len(word) - 3:
+			return word[:i] + random.choise(exchange_3_character(word[i]+word[i+1]+word[i+2])) + word[i+3:]
+	if op == 8:
+		# truong hop 4 ki tu, dau vao
+		if i <= len(word) - 4:
+			return word[:i] + exchange_4_character(word[i]+word[i+1]+word[i+2] + word[i+3]) + word[i+4:]
+	# ban phim
+	return word[:i] + get_prox_keys(word[i]) + word[i+1:]
+
+
+def add_noise_sequen(data):
+	"""
+		chay ham nay khi da chay filter_number_d_underscore
+	"""
+	a = ['data_book.json', 'data_cals.json','data_dial.json', 'data_news,json', 'data_stors.json','data_dial2.json']
+	b = ['train_book.json', 'train_cals.json','train_dial.json', 'train_news.json', 'train_stors.json', 'train_dial2.json']
+	c = ['test_book.json', 'test_cals.json','test_dial.json', 'test_news.json', 'test_stors.json', 'test_dial2.json']
+	d = ["BOOK","CALS", "DIAL", "NEWS", "STORS", "DIAL2"]
+	f = ['train_data.json','test_data.json','tran_violation.json','test_violation.json']
+	path = './data/'
+	data1 = []
+	with open(path+'train_tiny.json','r') as outfile:
+		data1 = json.load(outfile)
+
+	for i in len(data1):
+		
+
+
+
+
 
 if __name__ == '__main__':
 
@@ -471,16 +553,20 @@ if __name__ == '__main__':
 	# 		json.dump(data2, outfile, ensure_ascii=False)   
 
 	# result()
-	# random_10_sequence(10)
-	ghv = get_phonology_vietnamese('')
-	gs = random.choice(get_change_sign('u'))
-	gc = random.choice(get_repleace_character('u'))
-	print(ghv)
-	print(gs)
-	print(gc)
+	random_10_sequence(10)
+	#ghv = get_phonology_vietnamese('')
+	#gs = random.choice(get_change_sign('u'))
+	#gc = random.choice(get_repleace_character('ch'))
+	#print(ghv)
+	#print(gs)
+	#print(gc)
 
+	#aaa = add_noise('liêng')
+	#print(aaa)
 
+	#aaa = 'aaaa'
 
+	#print(aaaa[4])
 	# regex = re.compile('^([0-9]+|[])$')
 	# matches = re.search(regex,'g80')
 	# print(matches)
