@@ -204,16 +204,125 @@ def random_10_sequence(number):
 	# split_token_json(path+a[1],data1,data2)
 	# # split_token_json(path+a[2],data1,data2)
 
-	with open(path+'train_data.json','r') as outfile:
+	with open(path+'train_tiny.json','r') as outfile:
 		data1 = json.load(outfile)
 	element_random = random.sample(range(len(data1)), number)
 
 	for i in element_random:
+
 		print('original  ')
 		print(data1[i]['original'])
 		print(data1[i]['id'])
 		print('edit raw  ')
 		print(data1[i]['raw'])
+
+def get_phonology_vietnamese(word):
+    phonology_vietnamese = {}
+    phonology_vietnamese['inh'] = 'in'
+    phonology_vietnamese['ênh'] = 'ên'
+    phonology_vietnamese['êch'] = 'ết'
+    phonology_vietnamese['ich'] = 'ít'
+    phonology_vietnamese['ăng'] = 'ăn'
+    phonology_vietnamese['ang'] = 'an'
+    phonology_vietnamese['âng'] = 'ân'
+    phonology_vietnamese['ưng'] = 'ưn'
+    phonology_vietnamese['ông'] = 'ôn'
+    phonology_vietnamese['ung'] = 'un'
+    phonology_vietnamese['iêc'] = 'iêt'
+    phonology_vietnamese['ước'] = 'ươt'
+    phonology_vietnamese['uôc'] = 'uôt'
+
+    phonology_vietnamese['iêng'] = 'iên'
+    phonology_vietnamese['ương'] = 'ươn'
+    phonology_vietnamese['uông'] = 'uôn'
+
+    phonology_vietnamese['ăc'] = 'ắt'
+    phonology_vietnamese['ac'] = 'at'
+    phonology_vietnamese['âc'] = 'ât'
+    phonology_vietnamese['ưc'] = 'ưt'
+    phonology_vietnamese['ôc'] = 'ôt'
+    phonology_vietnamese['uc'] = 'ut'
+    try:
+        return phonology_vietnamese[word]
+    except:
+        return word
+
+def get_change_sign(word):
+    """
+        # sign['a'] =  # a à á â ã ạ ả ấ  ầ  ậ ắ  ặ 
+        # sign['e'] =  # è é ê  ẹ ẻ ẽ ế  ề  ể  ễ  ệ 
+        # sign['i'] =  # ì í ỉ ị 
+        # sign['o'] =  # ò ó ô  õ ọ ỏ  ố ồ  ổ ộ ớ ờ ỡ ợ 
+        # sign['u'] =  # ù ú ụ ủ ứ ừ ữ ự 
+        # sign['y'] =  # ý ỳ ỵ ỷ 
+    """
+    sign_ = {}
+    sign_['a'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['à'] = ['a', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['á'] = ['à', 'a', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['â'] = ['à', 'á', 'a', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['ã'] = ['à', 'á', 'â', 'a', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['ạ'] = ['à', 'á', 'â', 'ã', 'a', 'ả', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['ả'] = ['à', 'á', 'â', 'ã', 'ạ', 'a', 'ấ', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['ấ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'a', 'ầ', 'ậ', 'ắ', 'ặ']
+    sign_['ầ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'a', 'ậ', 'ắ', 'ặ']
+    sign_['ậ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'a', 'ắ', 'ặ']
+    sign_['ă'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'ặ']
+    sign_['ặ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'a']
+    sign_['e'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['è'] = ['e', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['é'] = ['è', 'e', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['ê'] = ['è', 'é', 'e', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['ẹ'] = ['è', 'é', 'ê', 'e', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['ẻ'] = ['è', 'é', 'ê', 'ẹ', 'e', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['ẽ'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'e', 'ế', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['ế'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'e', 'ề', 'ể', 'ễ', 'ệ']
+    sign_['ề'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'e', 'ể', 'ễ', 'ệ']
+    sign_['ể'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'e', 'ễ', 'ệ']
+    sign_['ễ'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'e', 'ệ']
+    sign_['ệ'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'e']
+    sign_['i'] = ['ì', 'í', 'ỉ', 'ị']
+    sign_['ì'] = ['i', 'í', 'ỉ', 'ị']
+    sign_['í'] = ['ì', 'i', 'ỉ', 'ị']
+    sign_['ỉ'] = ['ì', 'í', 'i', 'ị']
+    sign_['ị'] = ['ì', 'í', 'ỉ', 'i']
+    sign_['o'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ò'] = ['o', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ó'] = ['ò', 'o', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ô'] = ['ò', 'ó', 'o', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['õ'] = ['ò', 'ó', 'ô', 'o', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ọ'] = ['ò', 'ó', 'ô', 'õ', 'o', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ỏ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'o', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ố'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'o', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ồ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'o', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ổ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'o', 'ộ', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ộ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'o', 'ớ', 'ờ', 'ỡ', 'ợ']
+    sign_['ớ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'o', 'ờ', 'ỡ', 'ợ']
+    sign_['ờ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'o', 'ỡ', 'ợ']
+    sign_['ỡ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'o', 'ợ']
+    sign_['ợ'] = ['ò', 'ó', 'ô', 'õ', 'ọ', 'ỏ', 'ố', 'ồ', 'ổ', 'ộ', 'ớ', 'ờ', 'ỡ', 'o']
+    sign_['u'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+    sign_['ù'] = ['u', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+    sign_['ú'] = ['ù', 'u', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+    sign_['ụ'] = ['ù', 'ú', 'u', 'ủ', 'ứ', 'ừ', 'ữ', 'ự']
+    sign_['ủ'] = ['ù', 'ú', 'ụ', 'u', 'ứ', 'ừ', 'ữ', 'ự']
+    sign_['ứ'] = ['ù', 'ú', 'ụ', 'ủ', 'u', 'ừ', 'ữ', 'ự']
+    sign_['ừ'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'u', 'ữ', 'ự']
+    sign_['ữ'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'u', 'ự']
+    sign_['ự'] = ['ù', 'ú', 'ụ', 'ủ', 'ứ', 'ừ', 'ữ', 'u']
+    sign_['y'] = ['ý', 'ỳ', 'ỵ', 'ỷ']
+    sign_['ý'] = ['y', 'ỳ', 'ỵ', 'ỷ']
+    sign_['ỳ'] = ['ý', 'y', 'ỵ', 'ỷ']
+    sign_['ỵ'] = ['ý', 'ỳ', 'y', 'ỷ']
+    sign_['ỷ'] = ['ý', 'ỳ', 'ỵ', 'y']
+    sign_['_'] = ['_']
+    sign_[''] = ['']
+    try:
+        return sign_[word]
+    except:
+        return word
+    
+
 def fillter_number_d_underscore(data1):
 	"""
 		loc string co chua so:
@@ -266,6 +375,72 @@ def fillter_number_d_underscore(data1):
 	# with open(path+'test.json', 'w') as outfile:
 	# 		json.dump(data1, outfile, ensure_ascii=False)
 
+def get_repleace_character(word):
+    repleace_character = {}
+    repleace_character['ch'] = ['tr']
+    repleace_character['tr'] = ['ch']
+    repleace_character['l'] = ['n']
+    repleace_character['n'] = ['l']
+    repleace_character['x'] = ['s']
+    repleace_character['s'] = ['x']
+    repleace_character['r'] = ['d', 'gi']
+    repleace_character['d'] = ['r', 'gi']
+    repleace_character['gi'] = ['d', 'r']
+    repleace_character['c'] = ['q', 'k']
+    repleace_character['k'] = ['q', 'c']
+    repleace_character['q'] = ['c', 'k']
+    repleace_character['i'] = ['y']
+    repleace_character['y'] = ['i']
+    repleace_character['_'] = ['_']
+    try:
+        return repleace_character[word]
+    except:
+        return word
+ 
+def get_prox_keys(word):
+    array_prox = {}
+    array_prox['a'] = ['q', 'w', 'z', 'x', 's']
+    array_prox['b'] = ['v', 'f', 'g', 'h', 'n', ' ']
+    array_prox['c'] = ['x', 's', 'd', 'f', 'v']
+    array_prox['d'] = ['x', 's', 'w', 'e', 'r', 'f', 'v', 'c']
+    array_prox['e'] = ['w', 's', 'd', 'f', 'r']
+    array_prox['f'] = ['c', 'd', 'e', 'r', 't', 'g', 'b', 'v']
+    array_prox['g'] = ['r', 'f', 'v', 't', 'b', 'y', 'h', 'n']
+    array_prox['h'] = ['b', 'g', 't', 'y', 'u', 'j', 'm', 'n']
+    array_prox['i'] = ['u', 'j', 'k', 'l', 'o']
+    array_prox['j'] = ['n', 'h', 'y', 'u', 'i', 'k', 'm']
+    array_prox['k'] = ['u', 'j', 'm', 'l', 'o']
+    array_prox['l'] = ['p', 'o', 'i', 'k', 'm']
+    array_prox['m'] = ['n', 'h', 'j', 'k', 'l']
+    array_prox['n'] = ['b', 'g', 'h', 'j', 'm']
+    array_prox['o'] = ['i', 'k', 'l', 'p']
+    array_prox['p'] = ['o', 'l']
+    array_prox['q'] = ['w', 'a']
+    array_prox['r'] = ['e', 'd', 'f', 'g', 't']
+    array_prox['s'] = ['q', 'w', 'e', 'z', 'x', 'c']
+    array_prox['t'] = ['r', 'f', 'g', 'h', 'y']
+    array_prox['u'] = ['y', 'h', 'j', 'k', 'i']
+    array_prox['v'] = ['', 'c', 'd', 'f', 'g', 'b']
+    array_prox['w'] = ['q', 'a', 's', 'd', 'e']
+    array_prox['x'] = ['z', 'a', 's', 'd', 'c']
+    array_prox['y'] = ['t', 'g', 'h', 'j', 'u']
+    array_prox['z'] = ['x', 's', 'a']
+    array_prox['1'] = ['q', 'w']
+    array_prox['2'] = ['q', 'w', 'e']
+    array_prox['3'] = ['w', 'e', 'r']
+    array_prox['4'] = ['e', 'r', 't']
+    array_prox['5'] = ['r', 't', 'y']
+    array_prox['6'] = ['t', 'y', 'u']
+    array_prox['7'] = ['y', 'u', 'i']
+    array_prox['8'] = ['u', 'i', 'o']
+    array_prox['9'] = ['i', 'o', 'p']
+    array_prox['0'] = ['o', 'p']
+    array_prox['_'] = ['_']
+    try:
+        return array_prox[word]
+    except:
+        return word
+
 if __name__ == '__main__':
 
 
@@ -277,22 +452,34 @@ if __name__ == '__main__':
 	path = './data/'
 	data1 = []
 	data2 = []
-	split_token_json(path+c[0],data1,data2)
+	# split_token_json(path+c[0],data1,data2)
 	# split_token_json(f2,data1,data2)
 	# split_token_json(f3,data1,data2)
 	# split_token_json(f4,data1,data2)
 	# split_token_json(f5,data1,data2)
 	# split_token_json(f6,data1,data2)
 
-	fillter_number_d_underscore(data1) # chi filter data chuan 
-	with open(path+f[5], 'w') as outfile:
-			json.dump(data1, outfile, ensure_ascii=False)
+
+
+	# fillter_number_d_underscore(data1) # chi filter data chuan 
+	# with open(path+f[5], 'w') as outfile:
+	# 		json.dump(data1, outfile, ensure_ascii=False)
+
+
 			# outfile.write(',\n')
 	# with open(path+f[5], 'w') as outfile:
 	# 		json.dump(data2, outfile, ensure_ascii=False)   
 
 	# result()
 	# random_10_sequence(10)
+	ghv = get_phonology_vietnamese('')
+	gs = random.choice(get_change_sign('u'))
+	gc = random.choice(get_repleace_character('u'))
+	print(ghv)
+	print(gs)
+	print(gc)
+
+
 
 	# regex = re.compile('^([0-9]+|[])$')
 	# matches = re.search(regex,'g80')
