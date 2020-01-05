@@ -1,9 +1,3 @@
-**/data_character
-**/data_word
-**/word_model
-**/spelling_model
-**/hybrid_model
-**/test_with_tiny
 *DS_Store
 # Byte-compiled / optimized / DLL files
 __pycache__/
