@@ -28,3 +28,11 @@ python main.py -logfolder -save_dir spelling_model -gpu 0 -input spelling -data_
 
 
 
+
+**/data_character
+**/data_word
+**/word_model
+**/spelling_model
+**/hybrid_model
+**/test_with_tiny
+**/saving

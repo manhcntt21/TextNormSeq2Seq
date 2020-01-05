@@ -106,3 +106,6 @@ Remove the flag `-logfolder` to output to console.
 
 conda install pytorch==1.1.0 torchvision==0.4.1 cuda100 -c pytorch, processing with ascii
 
+
+link tai du lieu: https://drive.google.com/drive/folders/1e04C4NLUTnDz41_LTQUb4UISmUld2t8t?usp=sharing
+
