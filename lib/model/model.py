@@ -104,6 +104,7 @@ class Seq2Seq(nn.Module):
         tgt, tgt_lens = batch['tgt']
         src, src_lens = batch['src']
         batch_size = src.size(1)
+        # print(batch_size)
         # print('Day la tgt.size()[0]: ', tgt.size()[0])
         assert(batch_size == tgt.size(1))
         input_seq = Variable(torch.LongTensor([lib.constants.BOS] * batch_size))

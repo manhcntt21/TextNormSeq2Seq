@@ -61,6 +61,7 @@ from pyvi import ViTokenizer, ViPosTagger
 import random
 import re
 import copy 
+from sklearn.utils import shuffle
 
 def convert(fn1,fn2,fn3):
 	"""
@@ -137,7 +138,7 @@ def merge_data_save(f1,f2,f3,f4,f5,f6,f7,f8):
 
 	fillter_number_d_underscore(data1) # chi filter data chuan
 	add_noise_sequen(data1) # add_noise
-
+	data1 = shuffle(data1) # shuffle data
 	with open(f7, 'w') as outfile:
 			json.dump(data1, outfile, ensure_ascii=False)
 			# outfile.write(',\n')
@@ -157,36 +158,39 @@ def result():
 
 	merge_data_save(path+b[0],path+b[1],path+b[2],path+b[3],path+b[4],path+b[5],path+f[0],path+f[2]) # train
 	merge_data_save(path+c[0],path+c[1],path+c[2],path+c[3],path+c[4],path+c[5],path+f[1],path+f[3]) # test
-def test_length():
+def test_length(f1,f2):
 	path = './data/'
 	# test length cau
-	with open(path+"train_data.json", 'r') as json_data:
+	with open(path+f1, 'r') as json_data:
 		data = json.load(json_data)
 	max_ = 0
 	for i in data:
 		if max_ < len(i['original']):
 			max_ = len(i['original'])
 	print(max_) 
+	print('len train', len(data))
 	# 68 + 2 = 70
 	# 65 + 2 = 67 =>>>>>>>69
 	# test length tu
-	with open(path+"test_data.json", 'r') as json_data:
-		data = json.load(json_data)
+
+	with open(path+f2, 'r') as json_data:
+		data1 = json.load(json_data)
 	max_ = 0
-	for i in data:
+	for i in data1:
 		tmp1 = i['raw']
 		tmp2 = i['original']
 		for j in tmp1:
 			if max_ < len(j):
 				max_ = len(j)
-				print(i['id'])
+				# print(i['id'])
 		for k in tmp2:
 			if max_ <len(k):
 				max_len(k)
-				print(i['id'])
+				# print(i['id'])
 	print(max_)
-	# 47 + 2 = 49
-	# 23 + 2 = 25  ========> 49
+	print('len test ' , len(data1))
+	# 47 + 4 = 
+	# 23 + 4 = 25  ========> 
 def random_10_sequence(number):
 	"""
 		test
@@ -208,17 +212,21 @@ def random_10_sequence(number):
 	# split_token_json(path+a[1],data1,data2)
 	# # split_token_json(path+a[2],data1,data2)
 
-	with open(path+'train_tiny.json','r') as outfile:
+	with open(path+'train_data.json','r') as outfile:
 		data1 = json.load(outfile)
 	element_random = random.sample(range(len(data1)), number)
 
-	for i in element_random:
+	# for i in element_random:
 
-		print('original  ')
-		print(data1[i]['original'])
-		print(data1[i]['id'])
-		print('edit raw  ')
-		print(data1[i]['raw'])
+	# 	print('original  ')
+	# 	print(data1[i]['original'])
+	# 	print(data1[i]['id'])
+	# 	print('edit raw  ')
+	# 	print(data1[i]['raw'])
+	for i in range(len(data1)):
+		if data1[i]['id'] == 'CALS_00039470':
+			print(data1[i])
+
 def fillter_number_d_underscore(data1):
 	"""
 		loc string co chua so:
@@ -476,12 +484,13 @@ def add_noise(word,op):
 
 	if op == 2:
 		i+=1
-		return word[:i] + '_'+ word[i:] 
+		if i <= len(word) - 1:
+			return word[:i] + '_'+ word[i:] 
 
 	if op == 3:
 		idx = word.find("_")
 		if idx != -1:
-			return word[:i] + word[i+1:];
+			return word[:idx] + word[idx+1:];
 	if op == 4:
 		return word[:i] + random.choice(get_repleace_character(word[i])) + word[i+1:]
 		# thieu truong hop, dau vao 2 ki tu
@@ -584,6 +593,8 @@ if __name__ == '__main__':
 
 	# result()
 	random_10_sequence(10)
+	# test_length('train_data.json','test_data.json')
+
 
 
 

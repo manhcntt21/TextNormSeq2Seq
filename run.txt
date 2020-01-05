@@ -1,0 +1,30 @@
+python main.py -logfolder -save_dir word_model -gpu 0 -input word -attention -bias -lowercase -bos -eos -brnn -batch_size 32 -dropout 0.5 -emb_size 100 -end_epoch 30 -layers 3 -learning_rate_decay 0.05 -lr 0.01 -max_grad_norm 5 -rnn_size 200 -rnn_type 'LSTM' -tie_decoder_embeddings -share_embeddings -share_vocab -start_decay_after 15 -teacher_forcing_ratio 0.6  -max_train_decode_len 70
+
+
+python main.py -logfolder -save_dir spelling_model -gpu 0 -input spelling -data_augm -noise_ratio 0.1 -attention -bias -lowercase -bos -eos -brnn -batch_size 16 -dropout 0.5 -emb_size 256 -end_epoch 40 -layers 3 -learning_rate_decay 0.05 -lr 0.001 -max_grad_norm 5 -rnn_size 500 -rnn_type 'LSTM'  -tie_decoder_embeddings -share_embeddings -share_vocab -start_decay_after 30 -teacher_forcing_ratio 0.6  -max_train_decode_len 51 
+
+
+
+
+
+python main.py -eval -logfolder -save_dir hybrid_model -gpu 0 -load_from word_model/model_50_word.pt -char_model spelling_model/model_40_spelling.pt -input hybrid -data_augm -noise_ratio 0.1 -lowercase -bos -eos -batch_size 32 -share_vocab
+
+
+
+
+
+
+mode interactive 
+
+python main.py -interactive -gpu 0 -load_from word_model/model_50_word.pt -char_model spelling_model/model_40_spelling.pt -input hybrid -data_augm -noise_ratio 0.1 -attention -bias -lowercase -bos -eos -brnn -batch_size 32 -rnn_type 'LSTM' -tie_decoder_embeddings -share_embeddings -share_vocab
+
+
+
+
+
+
+
+python main.py -logfolder -save_dir spelling_model -gpu 0 -input spelling -data_augm -noise_ratio 0.1 -attention -bias -lowercase -bos -eos -brnn -batch_size 16 -dropout 0.5 -emb_size 256 -end_epoch 40 -layers 3 -learning_rate_decay 0.05 -lr 0.001 -max_grad_norm 5 -rnn_size 500 -rnn_type 'LSTM'  -tie_decoder_embeddings -share_embeddings -share_vocab -start_decay_after 30 -teacher_forcing_ratio 0.6  -max_train_decode_len 51 -valsplit 7864
+
+
+

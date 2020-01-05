@@ -27,7 +27,6 @@ class Evaluator(object):
             src, src_lens = batch['src']
             tids = batch['tid']
             indices = batch['index']
-
             outputs = self.model(batch, eval=True)
             mask = lib.metric.sequence_mask(sequence_length=tgt_lens, max_len=tgt.size(0)).transpose(0,1)
             loss, _ = self.model.backward(outputs, tgt, mask, criterion=self.criterion, eval=True, normalize=True)
@@ -48,7 +47,7 @@ class Evaluator(object):
             #write predictions from secondary char model to file
             unk_file = csv.writer(open(os.path.join(self.opt.save_dir, "unkowns.csv"), "a"), delimiter='\t') if self.unk_model and self.opt.interactive else None
             preds = lib.metric.handle_tags(src_sent_words, preds)
-
+            
             preds = lib.metric.handle_unk(src, src_sent_words, preds, self.unk_model, unk_file)
             if(self.opt.self_tok):
                 preds = lib.metric.clean_self_toks(src_sent_words, preds, self.opt.self_tok)
@@ -76,23 +75,37 @@ class Evaluator(object):
                 logger.info("Predictions saved to %s" % pred_file)
             return valid_loss, results['f1']
 
+    # def _report(self, inputs, preds, targets, others):
+    #     for input, pred, target, other in zip(inputs, preds, targets, others):
+    #         tid, ind, score = other
+    #         token = '' if self.opt.input == 'spelling' else ' '
+    #         logger.info('ind:{} tid:{} \ninput:{}\ntarget:{}\nprediction:{}\n'.format(
+    #             ind, tid, token.join(input), token.join(target), token.join(pred))
+
     def _report(self, inputs, preds, targets, others):
         for input, pred, target, other in zip(inputs, preds, targets, others):
             tid, ind, score = other
             token = '' if self.opt.input == 'spelling' else ' '
             logger.info('ind:{} tid:{} \ninput:{}\ntarget:{}\nprediction:{}\n'.format(
-                ind, tid, token.join(input).encode('utf-8'), token.join(target).encode('utf-8'), token.join(pred).encode('utf-8')))
+                ind, tid, token.join(input), token.join(target), token.join(pred)))
+
 
     def save_json(self, inputs, preds, targets, others, pred_file): #And csv!
         json_entries=[]
         for input, pred, target, other in zip(inputs, preds, targets, others):
             tid, ind, sent_f1 = other
             json_entries.append({"tid":tid,"index":ind,"output":pred,"input":input, "target":target, "score":sent_f1})
-        with codecs.open(pred_file, "w", 'utf-8') as f:
-            f.write(json.dumps(json_entries, ensure_ascii=False))
-            # json.dumps(json_entries, f,ensure_ascii=False)
-        # with codecs.open(pred_file+".csv", "w", 'utf-8') as f:
-        #     tsvfile = csv.writer(f, delimiter='\t')
-        #     tsvfile.writerow(["ixdex", "score", "output", "input", "target"])
-        #     for x in json_entries:
-        #         tsvfile.writerow([x["index"],x["score"],x["output"].encode('utf-8'),x["input"].encode('utf-8'),x["target"].encode('utf-8')])
+        # with open(pred_file, "w") as f:
+        #     f.write(json.dumps(json_entries, ensure_ascii=False))
+        #     f.write("\n")
+        with open(pred_file, "w") as f:
+            for i in json_entries:
+                # f.write(json.dumps(json_entries, ensure_ascii=False))
+                json.dump(i,f, ensure_ascii=False)
+                f.write("\n")
+
+        with open(pred_file+".csv", "w") as f:
+            tsvfile = csv.writer(f, delimiter='\t')
+            tsvfile.writerow(["ixdex", "score", "output", "input", "target"])
+            for x in json_entries:
+                tsvfile.writerow([x["index"],x["score"],x["output"],x["input"],x["target"]])

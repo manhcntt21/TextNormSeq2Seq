@@ -45,12 +45,14 @@ class Trainer(object):
         epoch_time = time.time()
         train_data = lib.data.Dataset(self.train_data, self.opt)
         num_batches = train_data.num_batches
+        # print(num_batches)
         train_iter = train_data.batches()
         total_loss, total_corrects, total_tgts = 0, 0, 0
         for i, batch in enumerate(train_iter):
             self.model.train()
             tgt, tgt_lens = batch['tgt']
             src, src_lens = batch['src']
+            # print(batch['index'])
             outputs = self.model(batch)
             self.model.zero_grad()
             pad_masks = lib.metric.sequence_mask(sequence_length=tgt_lens, max_len=tgt.size(0)).transpose(0,1)

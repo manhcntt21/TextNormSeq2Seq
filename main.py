@@ -37,9 +37,10 @@ def train_char_model(args):
         # char_test_evaluator.eval(test_data, pred_file=pred_file)
         # logger.info("=======Char eval on validation set=============")
         # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
-        # char_evaluator.eval(valid_data, pred_file=pred_file)
+        # char_evaluator.eval(valid_data, pred_file=pred_file)  
+        # khi chay interactive thi comment doan nay lai 
     else: # Training
-        # char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt)
+        char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt)
         # char_trainer.train(opt.start_epoch, opt.end_epoch)
         # logger.info("=======Eval on test set=============")
         # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
@@ -47,7 +48,7 @@ def train_char_model(args):
         # logger.info("=======Eval on validation set=============")
         # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
         # char_evaluator.eval(valid_data, pred_file=pred_file)
-        logger.info('*** Finished Character model ***\n')
+        # logger.info('*** Finished Character model ***\n')
     return char_model
 
 

@@ -104,5 +104,5 @@ Remove the flag `-logfolder` to output to console.
 
 #### install torch with python
 
-conda install pytorch==1.3.1 torchvision==0.4.2 cuda100 -c pytorch, processing with ascii
+conda install pytorch==1.1.0 torchvision==0.4.1 cuda100 -c pytorch, processing with ascii
 

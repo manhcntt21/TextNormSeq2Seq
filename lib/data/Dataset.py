@@ -11,6 +11,8 @@ class Dataset(object):
             setattr(self, key, data[key])
         self.opt = opt
         self.size = len(self.src)
+        # print(self.size)
+        # print(self.opt.batch_size)
         self.num_batches = (self.size + self.opt.batch_size - 1) // self.opt.batch_size
 
     def __len__(self):
