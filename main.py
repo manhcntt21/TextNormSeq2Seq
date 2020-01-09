@@ -33,22 +33,22 @@ def train_char_model(args):
             print('Prediction is: {}'.format(''.join(prediction)))
     elif opt.eval: # Evaluation only
         logger.info("=======Char eval on test set=============")
-        # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
-        # char_test_evaluator.eval(test_data, pred_file=pred_file)
-        # logger.info("=======Char eval on validation set=============")
-        # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
-        # char_evaluator.eval(valid_data, pred_file=pred_file)  
+        pred_file = os.path.join(opt.save_dir, 'test.pred.char')
+        char_test_evaluator.eval(test_data, pred_file=pred_file)
+        logger.info("=======Char eval on validation set=============")
+        pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
+        char_evaluator.eval(valid_data, pred_file=pred_file)  
         # khi chay interactive thi comment doan nay lai 
     else: # Training
-        char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt)
-        # char_trainer.train(opt.start_epoch, opt.end_epoch)
-        # logger.info("=======Eval on test set=============")
-        # pred_file = os.path.join(opt.save_dir, 'test.pred.char')
-        # char_test_evaluator.eval(test_data, pred_file=pred_file)
-        # logger.info("=======Eval on validation set=============")
-        # pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
-        # char_evaluator.eval(valid_data, pred_file=pred_file)
-        # logger.info('*** Finished Character model ***\n')
+        char_trainer = lib.train.Trainer(char_model, char_evaluator, train_data, valid_data ,char_optim, opt, test_data)
+        char_trainer.train(opt.start_epoch, opt.end_epoch)
+        logger.info("=======Eval on test set=============")
+        pred_file = os.path.join(opt.save_dir, 'test.pred.char')
+        char_test_evaluator.eval(test_data, pred_file=pred_file)
+        logger.info("=======Eval on validation set=============")
+        pred_file = os.path.join(opt.save_dir, 'valid.pred.char')
+        char_evaluator.eval(valid_data, pred_file=pred_file)
+        logger.info('*** Finished Character model ***\n')
     return char_model
 
 
@@ -89,7 +89,7 @@ def main():
         evaluator.eval(valid_data, pred_file=pred_file)
     else: # Training
         ## validdata cung chinh la training data 
-        trainer = lib.train.Trainer(model, evaluator, train_data, valid_data ,optim, opt)
+        trainer = lib.train.Trainer(model, evaluator, train_data, valid_data ,optim, opt, test_data)
         trainer.train(opt.start_epoch, opt.end_epoch)
         logger.info("=======Eval on test set=============")
         pred_file = os.path.join(opt.save_dir, 'test.pred')

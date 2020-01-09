@@ -92,9 +92,15 @@ def add_noise(word):
 
 
 if __name__ == '__main__':
-    a = '[anh'
-    b = add_noise(a)
-    print(b)
+    # a = '[anh'
+    # b = add_noise(a)
+    # print(b)
     # b = get_prox_keys()
 
+    a = 10
+    b = 'string'
+    c = str(a)
+
+    print(type(a))
+    print(type(c))
     

@@ -216,16 +216,15 @@ def random_10_sequence(number):
 		data1 = json.load(outfile)
 	element_random = random.sample(range(len(data1)), number)
 
-	# for i in element_random:
-
-	# 	print('original  ')
-	# 	print(data1[i]['original'])
-	# 	print(data1[i]['id'])
-	# 	print('edit raw  ')
-	# 	print(data1[i]['raw'])
-	for i in range(len(data1)):
-		if data1[i]['id'] == 'CALS_00039470':
-			print(data1[i])
+	for i in element_random: 	
+		print('original  ')
+		print(data1[i]['original'])
+		print(data1[i]['id'])
+		print('edit raw  ')
+		print(data1[i]['raw'])
+	#for i in range(len(data1)):
+	#	if data1[i]['id'] == 'CALS_00039470':
+	#		print(data1[i])
 
 def fillter_number_d_underscore(data1):
 	"""
@@ -251,6 +250,7 @@ def fillter_number_d_underscore(data1):
 		for j, k in enumerate(data1[i]['original']):
 			if re.search(regex1, k):
 				data1[i]['raw'][j] = '@' +data1[i]['raw'][j]
+				data1[i]['original'][j] = '@' +data1[i]['original'][j]
 			elif re.search(regex, k):
 				index = []
 				for m,n in enumerate(k):   # tach tahnh ky tu
@@ -576,23 +576,27 @@ def create_tiny():
 	path = './data/'
 	data1 = []
 	data2 = []
-
+	data3 = []
+	  data4 = []
 	split_token_json(path+b[0],data1,data2)
 	fillter_number_d_underscore(data1) # chi filter data chuan 
 	add_noise_sequen(data1)
 	with open(path+f[4], 'w') as outfile:
 			json.dump(data1, outfile, ensure_ascii=False)
 
-	split_token_json(path+c[0],data1,data2)
-	fillter_number_d_underscore(data1) # chi filter data chuan 
-	add_noise_sequen(data1)
+	split_token_json(path+c[0],data3,data4)
+	fillter_number_d_underscore(data3) # chi filter data chuan 
+	add_noise_sequen(data3)
 	with open(path+f[5], 'w') as outfile:
-			json.dump(data1, outfile, ensure_ascii=False)
+			json.dump(data3, outfile, ensure_ascii=False)
+
+
 
 if __name__ == '__main__':
 
-	# result()
-	random_10_sequence(10)
+	create_tiny()
+	#result()
+	# random_10_sequence(10)
 	# test_length('train_data.json','test_data.json')
 
 

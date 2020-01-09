@@ -20,6 +20,8 @@ class Trainer(object):
 
     def train(self, start_epoch, end_epoch):
         if(self.opt.save_interval==-1): self.opt.save_interval=end_epoch+1
+        train_f1_total = []
+        test_f1_total = []
         for epoch in range(start_epoch, end_epoch + 1):
             logger.info('\n* TextNorm epoch *')
             logger.info('Model optim lr: %g' % self.optim.lr)
@@ -27,6 +29,9 @@ class Trainer(object):
             logger.info('Train loss: %.2f' % total_loss)
             logger.info('Train total_accuracy: %.2f' % total_accuracy)
             valid_loss, valid_f1 = self.evaluator.eval(self.eval_data) #######
+            _, test_f1 = self.evaluator.eval(self.test_eval)
+            train_f1_total.append(str(epoch) + str(valid_f1))
+            test_f1_total.append(str(epoch) + str(test_f1))
             self.optim.update_lr(valid_loss, epoch)
             if epoch % self.opt.save_interval == 0 or epoch==end_epoch:
                 checkpoint = {
@@ -39,6 +44,24 @@ class Trainer(object):
                 model_name += "_"+self.opt.input+".pt"
                 torch.save(checkpoint, model_name)
                 logger.info('Save model as %s' % model_name)
+
+            if self.opt.input == 'word':
+                with open(self.opt.save_log + '/word/train.txt', 'w') as f:
+                    for i in train_f1_total:
+                        f.write(i)
+
+                with open(self.opt.save_log + '/word/test.txt', 'w') as f:
+                    for i in test_f1_total:
+                        f.write(i)
+            elif self.opt.input == 'spelling':
+                with open(self.opt.save_log + '/spelling/train.txt', 'w') as f:
+                    for i in train_f1_total:
+                        f.write(i)
+
+                with open(self.opt.save_log + '/spelling/test.txt', 'w') as f:
+                    for i in test_f1_total:
+                        f.write(i)
+	
 
     def train_epoch(self, epoch):
         self.model.train()
@@ -66,6 +89,7 @@ class Trainer(object):
             if (i + 1) % self.opt.log_interval == 0:
                 words_pers = int(num_words / (time.time() - epoch_time))
                 accuracy = 100 * (num_corrects/float(num_tgts))
-                logger.info('Epoch %3d,  %6d/%d batches  loss:%f,  num_corrects :%d,  num_tgts :%d ,accuracy:%f' %(epoch, i + 1, num_batches, loss, num_corrects, num_tgts,accuracy))
+                logger.info('Epoch %3d,  %6d/%d batches  loss:%f,  num_corrects :%d,  num_tgts :%d ,accuracy:%f' %(epoch, i + 1, 
+                num_batches, loss, num_corrects, num_tgts,accuracy))
                 # logger.info('Epoch %3d,  %6d/%d batches  loss:%f,  num_words:%d,  accuracy:%f' %(epoch, i + 1, num_batches, loss, words_pers, accuracy))
         return total_loss/float(num_batches), 100*(total_corrects/float(total_tgts))

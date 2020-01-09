@@ -188,8 +188,9 @@ parser.add_argument('-learning_rate_decay', type=float, default=0.05,help='Multi
 parser.add_argument('-start_decay_after', type=int, default=15,help='Decay learning rate AFTER this epoch')
 ## GPU
 parser.add_argument('-gpu', type=int, default=0,help='GPU id. Support single GPU only')
-parser.add_argument('-log_interval', type=int, default=1,help='Print stats after that many training steps')
-parser.add_argument('-save_interval', type=int, default=-1,help='Save model and evaluate after that many training steps')
+parser.add_argument('-log_interval', type=int, default=-1,help='Print stats after that many training steps')
+parser.add_argument('-save_log', type=str, default='loss_folder',help='Save model and evaluate after that many training steps')
+parser.add_argument('-save_interval', type=int, default=-1, help='save loss train and test')
 parser.add_argument('-seed', type=int, default=3435,help='Random seed')
 parser.add_argument('-logfolder', action='store_true', default=False, help='Log output to file')
 parser.add_argument('-save_dir',default='saving', help='Directory to save model checkpoints')
