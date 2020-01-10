@@ -49,18 +49,23 @@ class Trainer(object):
                 with open(self.opt.save_log + '/word/train.txt', 'w') as f:
                     for i in train_f1_total:
                         f.write(i)
+                        f.write('\n')
 
                 with open(self.opt.save_log + '/word/test.txt', 'w') as f:
                     for i in test_f1_total:
                         f.write(i)
+                        f.write('\n')
+
             elif self.opt.input == 'spelling':
                 with open(self.opt.save_log + '/spelling/train.txt', 'w') as f:
                     for i in train_f1_total:
                         f.write(i)
+                        f.write('\n')
 
                 with open(self.opt.save_log + '/spelling/test.txt', 'w') as f:
                     for i in test_f1_total:
                         f.write(i)
+                        f.write('\n')
 	
 
     def train_epoch(self, epoch):
