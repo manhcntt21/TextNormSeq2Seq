@@ -10,6 +10,7 @@ import random
 import re
 import copy 
 from sklearn.utils import shuffle
+random.seed(3255)
 
 def convert(fn1,fn2,fn3):
 	"""
@@ -37,7 +38,7 @@ def split_train_test(fn1,fn2,fn3):
 	    for f in json_data:
 	    	data.append(json.loads(f))
 
-	train, test = train_test_split(data, test_size = 0.2)
+	train, test = train_test_split(data, test_size = 0.2, random_state=3255)
 	with open(fn2, 'w') as outfile:
 		for f in train:
 			json.dump(f, outfile, ensure_ascii=False)
@@ -86,6 +87,7 @@ def merge_data_save(f1,f2,f3,f4,f5,f6,f7,f8):
 
 	fillter_number_d_underscore(data1) # chi filter data chuan
 	add_noise_sequen(data1) # add_noise
+
 	data1 = shuffle(data1) # shuffle data
 	with open(f7, 'w') as outfile:
 			json.dump(data1, outfile, ensure_ascii=False)
@@ -162,12 +164,13 @@ def random_10_sequence(number):
 
 	with open(path+'train_data.json','r') as outfile:
 		data1 = json.load(outfile)
-	element_random = random.sample(range(len(data1)), number)
+	# element_random = random.sample(range(len(data1)), number)
 
-	for i in element_random: 	
+	# for i in element_random:
+	for i in range(number): 	
 		print('original  ')
 		print(data1[i]['original'])
-		print(data1[i]['id'])
+		# print(data1[i]['id'])
 		print('edit raw  ')
 		print(data1[i]['raw'])
 	#for i in range(len(data1)):
@@ -554,6 +557,15 @@ def add_noise_sequen(data1):
 	error = [0,1,2,3,4,5,6,7,8,9]
 	sequence = [1,2,3]
 	index = 0
+
+	## dem so loi
+	file_errorr = []
+	for i in range(10):
+		file_errorr.append(0)
+	
+	# dem so cau tao ra
+	# n_sequence_add = 0 
+	
 	for i in range(len(data1)):
 		m = random.random()
 		# print('-------------------------------1-----------------------------------')
@@ -563,6 +575,7 @@ def add_noise_sequen(data1):
 			# print('before = ',data1[i]['id'])
 			n_quence = random.choice(sequence)
 			for j in range(n_quence):
+				# n_sequence_add = n_sequence_add + 1
 				n_error = random.randint(0,30)*len(data1[i]['original'])/100
 				tmp = copy.deepcopy(data1[i])
 				data2.append(tmp)
@@ -575,6 +588,7 @@ def add_noise_sequen(data1):
 					word = data2[index]['original'][n]
 					if not re.search(regex1,word): # so thi loai
 						op = random.choice(error)
+						file_errorr[op] = file_errorr[op] + 1
 						word = add_noise(word,op)
 						data2[index]['raw'][n] = word
 				# print('<<<<noise>>>>>')
@@ -582,11 +596,16 @@ def add_noise_sequen(data1):
 				# print(data2[index]['original'])
 				index+=1
 		# print('-------------------------------2-----------------------------------')
+	print(file_errorr)
+	print('so %d duoc them' %len(data2))
+	# thu khong lay du lieu goc ban dau
+	# data1 = []
 
 	for i in range(len(data2)):
 		data1.append(data2[i])
 	# with open(path + fileout, 'w') as outfile:
 	# 	json.dump(data1, outfile, ensure_ascii=False)
+	print('tong so %d'% len(data1))
 
 def create_tiny():
 	a = ['data_book.json', 'data_cals.json','data_dial.json', 'data_news.json', 'data_stors.json','data_dial2.json']
@@ -610,6 +629,8 @@ def create_tiny():
 	add_noise_sequen(data3)
 	with open(path+f[5], 'w') as outfile:
 			json.dump(data3, outfile, ensure_ascii=False)
+	print(len(data1))
+	print(len(data3))
 
 def isUrl(word):
 	"""
@@ -631,9 +652,16 @@ def isUrl(word):
 
 if __name__ == '__main__':
 
+
 	# create_tiny()
-	#result()
-	# random_10_sequence(10)
+	# file_errorr = []
+	# for i in range(10):
+	# 	file_errorr.append(0)
+	# file_errorr[0] = file_errorr[0] + 1
+	# print(file_errorr)
+
+	result()
+	# random_10_sequence(20)
 	# test_length('train_data.json','test_data.json')
 	
 	# print(len('ấ')) ## = 1
