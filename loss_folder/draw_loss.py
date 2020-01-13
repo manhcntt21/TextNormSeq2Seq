@@ -48,8 +48,8 @@ def draw(epoches, train_word, test_word, train_char, test_char):
 	plt.xlabel('epoch')
 	plt.ylabel('loss')
 	plt.show()
-	plt.xticks(np.arange(1,70,step=10))
-	plt.savefig('loss.png')	
+	plt.xticks(np.arange(1,len(train_word),step=10))
+	plt.savefig('loss_13_1.png')	
 
 
 if __name__ == "__main__":

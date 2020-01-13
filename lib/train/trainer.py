@@ -30,8 +30,8 @@ class Trainer(object):
             logger.info('Train total_accuracy: %.2f' % total_accuracy)
             valid_loss, valid_f1 = self.evaluator.eval(self.eval_data) #######
             _, test_f1 = self.evaluator.eval(self.test_eval)
-            train_f1_total.append(str(epoch) + str(valid_f1))
-            test_f1_total.append(str(epoch) + str(test_f1))
+            train_f1_total.append(str(epoch) +'\t' + str(valid_f1))
+            test_f1_total.append(str(epoch) +'\t' + str(test_f1))
             self.optim.update_lr(valid_loss, epoch)
             if epoch % self.opt.save_interval == 0 or epoch==end_epoch:
                 checkpoint = {
