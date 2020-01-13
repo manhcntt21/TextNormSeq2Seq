@@ -3,58 +3,6 @@
 
 # -*- coding: utf8 -*-
 
-# # a = "Trường đại học bách khoa hà nội"
-# # b = ViTokenizer.tokenize(a)
-# # print(b.split(" "))
-# # print(a)
-
-# sign = 'tr\u01b0\u1eddng'
-
-# # # sign = [u'tr\u01b0\u1eddng']
-# # for i in sign:
-# # 	print(i)
-# # 	# if i == 'à':
-# # 	# print(i)
-# print(sign)
-
-
-
-
-
-# data = []
-# with open('data_.jsonl', 'r') as json_data:
-#     for f in json_data:
-#     	data.append(json.loads(f)) 
-
-# with open('data_book.json', 'w', encoding='utf-8') as outfile:
-# 	for f in data:
-# 		tmp = f['id'].split("_")
-# 		if(tmp[0] == "BOOK"):
-# 			json.dump(f, outfile, ensure_ascii=False)
-# 			outfile.write('\n')
-
-# with open('data_book.json', 'w') as outfile:
-# 	for f in data:
-# 		tmp = f['id'].split("_")
-# 		if(tmp[0] == "BOOK"):
-# 			json.dump(f, outfile)
-# 			outfile.write('\n')
-# 			print(f)
-
-
-# data_book = []
-
-# with open('data_book.json', 'r') as json_data:
-#     for f in json_data:
-#     	data_book.append(json.loads(f)) 
-
-# train, test = train_test_split(data_book, test_size = 0.2)
-
-# with open('train_book.json', 'w') as outfile:
-# 	for f in train:
-# 		json.dump(f, outfile, ensure_ascii=False)
-# 		outfile.write('\n')
-
 import json
 from sklearn.model_selection import train_test_split
 from pyvi import ViTokenizer, ViPosTagger
@@ -297,7 +245,7 @@ def get_change_sign(word):
     sign_['ấ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'a', 'ầ', 'ậ', 'ắ', 'ặ']
     sign_['ầ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'a', 'ậ', 'ắ', 'ặ']
     sign_['ậ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'a', 'ắ', 'ặ']
-    sign_['ă'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'ặ']
+    sign_['ắ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'ặ']
     sign_['ặ'] = ['à', 'á', 'â', 'ã', 'ạ', 'ả', 'ấ', 'ầ', 'ậ', 'a', 'a']
     sign_['e'] = ['è', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
     sign_['è'] = ['e', 'é', 'ê', 'ẹ', 'ẻ', 'ẽ', 'ế', 'ề', 'ể', 'ễ', 'ệ']
@@ -471,6 +419,79 @@ def get_prox_keys(word):
         return array_prox[word]
     except:
         return word
+def noise_telex(word):
+	#2
+	noise_tele['à'] = 'af'
+	noise_tele['á'] = 'as'
+	noise_tele['â'] = 'aa'
+	noise_tele['ã'] = 'ax'
+	noise_tele['ạ'] = 'aj'
+	noise_tele['ả'] = 'ar'
+	#3
+	noise_tele['ấ'] = 'aas'
+	noise_tele['ầ'] = 'aaf'
+	noise_tele['ẩ'] = 'aar'
+	noise_tele['ậ'] = 'aaj'
+	noise_tele['ắ'] = 'aws'
+	noise_tele['ặ'] = 'awj'
+	#2
+	noise_tele['è'] = 'ef'
+	noise_tele['é'] = 'es'
+	noise_tele['ê'] = 'ee'
+	noise_tele['ẽ'] = 'ex'
+	noise_tele['ẹ'] = 'ej'
+	noise_tele['ẻ'] = 'ar'
+	#3
+	noise_tele['ế'] = 'ees'
+	noise_tele['ề'] = 'eef'
+	noise_tele['ể'] = 'eer'
+	noise_tele['ệ'] = 'eej'
+	noise_tele['ễ'] = 'eex'
+	#2
+	noise_tele['ì'] = 'if'
+	noise_tele['í'] = 'is'
+	noise_tele['ỉ'] = 'ir'
+	noise_tele['ị'] = 'ij'
+	#2
+	noise_tele['ò'] = 'of'
+	noise_tele['ó'] = 'os'
+	noise_tele['ô'] = 'ô'
+	noise_tele['õ'] = 'ox'
+	noise_tele['ọ'] = 'oj'
+	noise_tele['ỏ'] = 'or'
+	noise_tele['ơ'] = 'ow'
+	#3
+	noise_tele['ố'] = 'oos'
+	noise_tele['ồ'] = 'oof'
+	noise_tele['ổ'] = 'oor'
+	noise_tele['ộ'] = 'ooj'
+	noise_tele['ớ'] = 'ows'
+	noise_tele['ờ'] = 'owf'
+	noise_tele['ỡ'] = 'owx'
+	noise_tele['ợ'] = 'owj'
+	#2
+	noise_tele['ù'] = 'uf'
+	noise_tele['ú'] = 'us'
+	noise_tele['ư'] = 'uw'
+	noise_tele['ũ'] = 'ux'
+	noise_tele['ụ'] = 'uj'
+	noise_tele['ủ'] = 'ur'
+	#3
+	noise_tele['ứ'] = 'uws'
+	noise_tele['ừ'] = 'uwf'
+	noise_tele['ữ'] = 'uwx'
+	noise_tele['ự'] = 'uwj'
+	#2
+	noise_tele['ý'] = 'ys'
+	noise_tele['ỳ'] = 'yf'
+	noise_tele['ỵ'] = 'yj'
+	noise_tele['ỷ'] = 'yr'
+
+	noise_tele['_'] = '_'
+	try:
+		return array_prox[word]
+	except:
+		return word
 def add_noise(word,op):
 	i = random.randint(0, len(word) -1 )
 	#op = random.randint(0,30)
@@ -577,7 +598,7 @@ def create_tiny():
 	data1 = []
 	data2 = []
 	data3 = []
-	  data4 = []
+	data4 = []
 	split_token_json(path+b[0],data1,data2)
 	fillter_number_d_underscore(data1) # chi filter data chuan 
 	add_noise_sequen(data1)
@@ -590,127 +611,29 @@ def create_tiny():
 	with open(path+f[5], 'w') as outfile:
 			json.dump(data3, outfile, ensure_ascii=False)
 
+def isUrl(word):
+	"""
+		loc url
+	"""
+	regex = re.compile(
+	r'^(?:http|ftp)s?://' # http:// or https://
+	r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+	r'localhost|' #localhost...
+	r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+	r'(?::\d+)?' # optional port
+	r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+	match = re.match(regex, token)
+	if match is None:
+		return False
+	else:
+		return True
 
 
 if __name__ == '__main__':
 
-	create_tiny()
+	# create_tiny()
 	#result()
 	# random_10_sequence(10)
 	# test_length('train_data.json','test_data.json')
-
-
-
-
-
-
-
-
-
-			# outfile.write(',\n')
-	# with open(path+f[5], 'w') as outfile:
-	# 		json.dump(data2, outfile, ensure_ascii=False)   
-
-
-
-
-
-	#ghv = get_phonology_vietnamese('')
-	#gs = random.choice(get_change_sign('u'))
-	#gc = random.choice(get_repleace_character('ch'))
-	#print(ghv)
-	#print(gs)
-	#print(gc)
-
-	#aaa = add_noise('liêng')
-	#print(aaa)
-
-	#aaa = 'aaaa'
-
-	#print(aaaa[4])
-	# regex = re.compile('^([0-9]+|[])$')
-	# matches = re.search(regex,'g80')
-	# print(matches)
-	# data = []
-	# with open('./word_model/'+'valid.pred', 'r') as outfile:
-	# 	data.append(json.loads(outfile))
-	# print(data)
-
-	# data = []
-	# data2 = []
-	# save_file_json(path+"test_book.json",data,data2)
-	# with open(path+"test_book_standart.json", 'w') as outfile:
-	# 	json.dump(data, outfile, ensure_ascii=False)
-
-
-	# import codecs
-	# import re
-	# a = '1_'
-	# b = "b\u1edfi_v\u1eady"
-
-	# regex = re.compile(r'\u00E0\u00E1\u00E2\u00E3\u00E8\u00E9\u00EA\u00EC\u00ED\u00F2\u00F3\u00F4\u00F5\u00F9\u00FA\u00FD\u00E5\u0111\u0123\u0169\u01A1\u01B0\u1EA1\u1EA3\u1EA5\u1EA7\u1EA9\u1EAB\u1EAD\u1EAF\u1EB1\u1EB3\u1EB5\u1EB7\u1EB9\u1EBB\u1EBD\u1EBF\u1EC1\u1EC3\u1EC5\u1EC7\u1EC9\u1ECB\u1ECD\u1ECF\u1ED1\u1ED3\u1ED5\u1ED7\u1ED9\u1EDB\u1EDD\u1EDF\u1EE1\u1EE3\u1EE5\u1EE7\u1EE9\u1EEB\u1EED\u1EEF\u1EF1\u1EF3\u1EF5\u1EF7\u1EF9abcdefghiklmnopqrstuvxy0123456789_')
 	
-	# b = u'b\u1edfi_v\u1eady'
-	# regex  = re.compile('^[aàảãáạăằẳẵắặâầẩẫấậbcdđeèẻẽéẹêềểễếệfghiìỉĩíịjklmnoòỏõóọôồổỗốộơờởỡớợpqrstuùủũúụưừửữứựvwxyỳỷỹýỵz0123456789_]+$')
-	# matches = re.search(regex,b)
-	# c  = 'b\xe1\xbb\x9fi_v\xe1\xba\xady'
-	# # c.encode("windows-1252").decode("utf-8")
-	# c1 =  unicode(c, "utf-8")
-	# print(c1)
-	# print(matches.group(0))
-	# print(len(matches.group(0)))
-	# print(len(b))
-	# print(u'ph\u1ea3i')
-	# print(len(list(matches)))
-	# if match is None:
-	# 	print("FALSE")
-	# else :
-	# 	print("TRUE")
-	# print(b)
-	# c = u'b\u1edfi_v\u1eady'
-	# for i in c:
-	# 	print(i)
-	# b = codecs.decode(a,'utf-8')
-	# print(type(b))
-	# print(a.isalnum())
-	# print(len(a))
-	# for i in a:
-	# 	print(i)
-	# # print(a[0])
-				
-
-	# b = '\u00E0\u00E1\u00E2\u00E3\u00E8\u00E9\u00EA\u00EC\u00ED\u00F2\u00F3\u00F4\u00F5\u00F9\u00FA\u00FD\u00E5\u0111\u0123\u0169\u01A1\u01B0\u1EA1\u1EA3\u1EA5\u1EA7\u1EA9\u1EAB\u1EAD\u1EAF\u1EB1\u1EB3\u1EB5\u1EB7\u1EB9\u1EBB\u1EBD\u1EBF\u1EC1\u1EC3\u1EC5\u1EC7\u1EC9\u1ECB\u1ECD\u1ECF\u1ED1\u1ED3\u1ED5\u1ED7\u1ED9\u1EDB\u1EDD\u1EDF\u1EE1\u1EE3\u1EE5\u1EE7\u1EE9\u1EEB\u1EED\u1EEF\u1EF1\u1EF3\u1EF5\u1EF7\u1EF9abcdefghiklmnopqrstuvxy0123456789_'
-	# c = '[\u00E0-\u00ED]'
-	# print('U+0041-U+005A'.encode('utf-8').encode('hex'))
-	# result = b.decode('utf8')
-
-
-	# a = "aàảãáạăằẳẵắặâầẩẫấậbcdđeèẻẽéẹêềểễếệfghiìỉĩíịjklmnoòỏõóọôồổỗốộơờởỡớợpqrstuùủũúụưừửữứựvwxyỳỷỹýỵz0123456789"
-	# print(len(a))
-
-	# test_dict = {}
-	# print(test_dict)
-	# if not test_dict:
-	#     print ("Dict is Empty")
-
-
-	# if not bool(test_dict):
-	#     print ("Dict is Empty")
-
-
-	# if len(test_dict) == 0:
-	#     print ("Dict is Empty")
-
-
-	# import random 
-	  
-	# # Generates a random number between 
-	# # a given positive range 
-	# r1 = random.randint(0, 10) 
-	# print("Random number between 0 and 10 is % s" % (r1)) 
-	# print(u'm\u1edbn')
-
-
-	# a = 2
-	# if a == 2 or a == 3:
-	# 	print('manh')
+	# print(len('ấ')) ## = 1
