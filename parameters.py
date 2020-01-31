@@ -81,125 +81,126 @@ logger = logging.getLogger("main")
 
 # test spelling 
 
-# parser = argparse.ArgumentParser(description='train.py')
-# ## Data options
-# # parser.add_argument('-traindata', default='dataset/data/train_tiny.json', help='Path to train data file')
-# # parser.add_argument('-testdata', default='dataset/data/test_tiny.json',help='Path to the test data file')
-
-# parser.add_argument('-traindata', default='dataset/data/train_data.json', help='Path to train data file')
-# parser.add_argument('-testdata', default='dataset/data/test_data.json',help='Path to the test data file')
-
-# parser.add_argument('-valsplit', type=int, default=0,help='Number of examples for validation')
-# parser.add_argument('-vocab_size', type=int, default=None, help='Limit vocabulary')
-# parser.add_argument('-lowercase', action='store_true', default=True,help='Converting to lowercase')
-# parser.add_argument('-share_vocab', action='store_true',default=True,help='Shared vocabulary btw source and target')
-# parser.add_argument('-eos',action='store_true', default=True,help='Adding EOS token at the end of each sequence')
-# parser.add_argument('-bos',action='store_true', default=True,help='Adding BOS token in the beginning of each sequence')
-# parser.add_argument('-self_tok', action='store_true',default=False, help='Special token @self to indicate that the input is to be left alone')
-# parser.add_argument('-input', default='spelling', choices=['word', 'char', 'spelling', 'hybrid'],
-#                     help='character or word level representation, spelling (character model trained on pairs of words) and hybrid (word+spelling)')
-# parser.add_argument('-maxlen', type=int, default=None,help='Maximum source sequence length')
-# parser.add_argument('-correct_unique_mappings', action='store_true',default=False, help='Correct unique mappings before training')
-# parser.add_argument('-char_model', type=str, help='Path to the pretrained char level model')
-# parser.add_argument('-data_augm', action='store_true',default=True, help='Use data augmentation or not')
-# ## Model options
-# parser.add_argument('-rnn_type', default='LSTM', choices=['LSTM', 'GRU'], help='Layer type  [LSTM|GRU]')
-# parser.add_argument('-layers', type=int, default=3,help='Number of layers in the LSTM encoder/decoder')
-# parser.add_argument('-brnn', action='store_true', default=True,help='Use a bidirectional encoder')
-# parser.add_argument('-rnn_size', type=int, default=500,help='RNN cell hidden size')
-# parser.add_argument('-emb_size', type=int, default=256,help='Embedding size')
-# parser.add_argument('-attention', action='store_true', default=True,help='Use attention')
-# parser.add_argument('-bias', action='store_true', default=True,help='Add bias term')
-# parser.add_argument('-tie_decoder_embeddings', action='store_true', default=True,
-#                     help='Share parameters between decoder embeddings and output projection matrix. See https://arxiv.org/abs/1608.05859')
-# parser.add_argument('-share_embeddings', action='store_true', default=True,
-#                     help='Share the word embeddings between encoder and decoder. Drastically reduces number of learned parameters.')
-# parser.add_argument('-dropout', type=float, default=0.5,help='Dropout input of every RNN layer.')
-# parser.add_argument('-backward_splits', type=int, default=None,help='Backward with smaller batches to save memory.')
-# parser.add_argument('-teacher_forcing_ratio', type=float, default=0.6,help='Probablity of using teacher forcing (scheduled sampling)')
-# parser.add_argument('-noise_ratio', type=float, default=0.1,help='% extra noise to add')
-# ## Training
-# parser.add_argument('-batch_size', type=int, default=500,help='Training batch size')
-# parser.add_argument('-start_epoch', type=int, default=1,help='Epoch to start training.')
-# parser.add_argument('-end_epoch', type=int, default=1,help='Number of supervised learning epochs')
-# parser.add_argument('-optim', default='adam', choices=['sgd', 'adam', 'adagrad', 'adadelta'],help='Optimization method.')
-# parser.add_argument('-lr', type=float, default=0.001,help='Initial learning rate')
-# parser.add_argument('-max_grad_norm', type=float, default=5,help='Clip gradients by max global gradient norm. See https://arxiv.org/abs/1211.5063')
-# parser.add_argument('-learning_rate_decay', type=float, default=0.05,help='Multiply learning with this value after -start_decay_after epochs')
-# parser.add_argument('-start_decay_after', type=int, default=30,help='Decay learning rate AFTER this epoch')
-# ## GPU
-# parser.add_argument('-gpu', type=int, default=0,help='GPU id. Support single GPU only')
-# parser.add_argument('-log_interval', type=int, default=1,help='Print stats after that many training steps')
-# parser.add_argument('-save_interval', type=int, default=-1,help='Save model and evaluate after that many training steps')
-# parser.add_argument('-seed', type=int, default=3435,help='Random seed')
-# parser.add_argument('-logfolder', action='store_true', default=False, help='Log output to file')
-# parser.add_argument('-save_dir',default='spelling_model_test', help='Directory to save model checkpoints')
-# parser.add_argument('-load_from', type=str, help='Path to a model checkpoint')
-# ## Inference
-# parser.add_argument('-eval', action='store_true',help='Evaluatation only mode')
-# parser.add_argument('-interactive', action='store_true',help='Interactive mode')
-# parser.add_argument('-max_train_decode_len', type=int, default=49,help='Max decoding length during training')
-# opt = parser.parse_args()
-
-
-##run 
-
 parser = argparse.ArgumentParser(description='train.py')
 ## Data options
-parser.add_argument('-traindata', default='dataset/data/train_data.json', help='Path to train data file')
-parser.add_argument('-testdata', default='dataset/data/test_data.json',help='Path to the test data file')
+# parser.add_argument('-traindata', default='dataset/data/train_tiny.json', help='Path to train data file')
+# parser.add_argument('-testdata', default='dataset/data/test_tiny.json',help='Path to the test data file')
+
+parser.add_argument('-traindata', default='dataset/data1/train_data.json', help='Path to train data file')
+parser.add_argument('-testdata', default='dataset/data1/test_data.json',help='Path to the test data file')
+
 parser.add_argument('-valsplit', type=int, default=0,help='Number of examples for validation')
 parser.add_argument('-vocab_size', type=int, default=None, help='Limit vocabulary')
-parser.add_argument('-lowercase', action='store_true', default=False,help='Converting to lowercase')
-parser.add_argument('-share_vocab', action='store_true',default=False,help='Shared vocabulary btw source and target')
-parser.add_argument('-eos',action='store_true', default=False,help='Adding EOS token at the end of each sequence')
-parser.add_argument('-bos',action='store_true', default=False,help='Adding BOS token in the beginning of each sequence')
+parser.add_argument('-lowercase', action='store_true', default=True,help='Converting to lowercase')
+parser.add_argument('-share_vocab', action='store_true',default=True,help='Shared vocabulary btw source and target')
+parser.add_argument('-eos',action='store_true', default=True,help='Adding EOS token at the end of each sequence')
+parser.add_argument('-bos',action='store_true', default=True,help='Adding BOS token in the beginning of each sequence')
 parser.add_argument('-self_tok', action='store_true',default=False, help='Special token @self to indicate that the input is to be left alone')
-parser.add_argument('-input', default='word', choices=['word', 'char', 'spelling', 'hybrid'],
+parser.add_argument('-input', default='spelling', choices=['word', 'char', 'spelling', 'hybrid'],
                     help='character or word level representation, spelling (character model trained on pairs of words) and hybrid (word+spelling)')
 parser.add_argument('-maxlen', type=int, default=None,help='Maximum source sequence length')
 parser.add_argument('-correct_unique_mappings', action='store_true',default=False, help='Correct unique mappings before training')
 parser.add_argument('-char_model', type=str, help='Path to the pretrained char level model')
-parser.add_argument('-data_augm', action='store_true',default=False, help='Use data augmentation or not')
+parser.add_argument('-data_augm', action='store_true',default=True, help='Use data augmentation or not')
 ## Model options
 parser.add_argument('-rnn_type', default='LSTM', choices=['LSTM', 'GRU'], help='Layer type  [LSTM|GRU]')
-parser.add_argument('-layers', type=int, default=1,help='Number of layers in the LSTM encoder/decoder')
-parser.add_argument('-brnn', action='store_true', default=False,help='Use a bidirectional encoder')
-parser.add_argument('-rnn_size', type=int, default=300,help='RNN cell hidden size')
-parser.add_argument('-emb_size', type=int, default=100,help='Embedding size')
-parser.add_argument('-attention', action='store_true', default=False,help='Use attention')
-parser.add_argument('-bias', action='store_true', default=False,help='Add bias term')
-parser.add_argument('-tie_decoder_embeddings', action='store_true', default=False,
+parser.add_argument('-layers', type=int, default=3,help='Number of layers in the LSTM encoder/decoder')
+parser.add_argument('-brnn', action='store_true', default=True,help='Use a bidirectional encoder')
+parser.add_argument('-rnn_size', type=int, default=500,help='RNN cell hidden size')
+parser.add_argument('-emb_size', type=int, default=256,help='Embedding size')
+parser.add_argument('-attention', action='store_true', default=True,help='Use attention')
+parser.add_argument('-bias', action='store_true', default=True,help='Add bias term')
+parser.add_argument('-tie_decoder_embeddings', action='store_true', default=True,
                     help='Share parameters between decoder embeddings and output projection matrix. See https://arxiv.org/abs/1608.05859')
-parser.add_argument('-share_embeddings', action='store_true', default=False,
+parser.add_argument('-share_embeddings', action='store_true', default=True,
                     help='Share the word embeddings between encoder and decoder. Drastically reduces number of learned parameters.')
-parser.add_argument('-dropout', type=float, default=0.2,help='Dropout input of every RNN layer.')
+parser.add_argument('-dropout', type=float, default=0.5,help='Dropout input of every RNN layer.')
 parser.add_argument('-backward_splits', type=int, default=None,help='Backward with smaller batches to save memory.')
 parser.add_argument('-teacher_forcing_ratio', type=float, default=0.6,help='Probablity of using teacher forcing (scheduled sampling)')
-parser.add_argument('-noise_ratio', type=float, default=0.4,help='% extra noise to add')
+parser.add_argument('-noise_ratio', type=float, default=0.1,help='% extra noise to add')
 ## Training
-parser.add_argument('-batch_size', type=int, default=32,help='Training batch size')
+parser.add_argument('-batch_size', type=int, default=500,help='Training batch size')
 parser.add_argument('-start_epoch', type=int, default=1,help='Epoch to start training.')
 parser.add_argument('-end_epoch', type=int, default=1,help='Number of supervised learning epochs')
 parser.add_argument('-optim', default='adam', choices=['sgd', 'adam', 'adagrad', 'adadelta'],help='Optimization method.')
-parser.add_argument('-lr', type=float, default=0.01,help='Initial learning rate')
+parser.add_argument('-lr', type=float, default=0.001,help='Initial learning rate')
 parser.add_argument('-max_grad_norm', type=float, default=5,help='Clip gradients by max global gradient norm. See https://arxiv.org/abs/1211.5063')
 parser.add_argument('-learning_rate_decay', type=float, default=0.05,help='Multiply learning with this value after -start_decay_after epochs')
-parser.add_argument('-start_decay_after', type=int, default=15,help='Decay learning rate AFTER this epoch')
+parser.add_argument('-start_decay_after', type=int, default=30,help='Decay learning rate AFTER this epoch')
 ## GPU
 parser.add_argument('-gpu', type=int, default=0,help='GPU id. Support single GPU only')
-parser.add_argument('-log_interval', type=int, default=-1,help='Print stats after that many training steps')
-parser.add_argument('-save_log', type=str, default='loss_folder',help='Save model and evaluate after that many training steps')
-parser.add_argument('-save_interval', type=int, default=-1, help='save loss train and test')
+parser.add_argument('-log_interval', type=int, default=1,help='Print stats after that many training steps')
+parser.add_argument('-save_interval', type=int, default=-1,help='Save model and evaluate after that many training steps')
 parser.add_argument('-seed', type=int, default=3435,help='Random seed')
 parser.add_argument('-logfolder', action='store_true', default=False, help='Log output to file')
-parser.add_argument('-save_dir',default='saving', help='Directory to save model checkpoints')
+parser.add_argument('-save_dir',default='spelling_model_test', help='Directory to save model checkpoints')
 parser.add_argument('-load_from', type=str, help='Path to a model checkpoint')
+parser.add_argument('-save_log', type=str, default='loss_folder',help='Save model and evaluate after that many training steps')
 ## Inference
 parser.add_argument('-eval', action='store_true',help='Evaluatation only mode')
 parser.add_argument('-interactive', action='store_true',help='Interactive mode')
-parser.add_argument('-max_train_decode_len', type=int, default=70,help='Max decoding length during training')
+parser.add_argument('-max_train_decode_len', type=int, default=49,help='Max decoding length during training')
 opt = parser.parse_args()
+
+
+# ##run 
+
+# parser = argparse.ArgumentParser(description='train.py')
+# ## Data options
+# parser.add_argument('-traindata', default='dataset/data/train_data.json', help='Path to train data file')
+# parser.add_argument('-testdata', default='dataset/data/test_data.json',help='Path to the test data file')
+# parser.add_argument('-valsplit', type=int, default=0,help='Number of examples for validation')
+# parser.add_argument('-vocab_size', type=int, default=None, help='Limit vocabulary')
+# parser.add_argument('-lowercase', action='store_true', default=False,help='Converting to lowercase')
+# parser.add_argument('-share_vocab', action='store_true',default=False,help='Shared vocabulary btw source and target')
+# parser.add_argument('-eos',action='store_true', default=False,help='Adding EOS token at the end of each sequence')
+# parser.add_argument('-bos',action='store_true', default=False,help='Adding BOS token in the beginning of each sequence')
+# parser.add_argument('-self_tok', action='store_true',default=False, help='Special token @self to indicate that the input is to be left alone')
+# parser.add_argument('-input', default='word', choices=['word', 'char', 'spelling', 'hybrid'],
+#                     help='character or word level representation, spelling (character model trained on pairs of words) and hybrid (word+spelling)')
+# parser.add_argument('-maxlen', type=int, default=None,help='Maximum source sequence length')
+# parser.add_argument('-correct_unique_mappings', action='store_true',default=False, help='Correct unique mappings before training')
+# parser.add_argument('-char_model', type=str, help='Path to the pretrained char level model')
+# parser.add_argument('-data_augm', action='store_true',default=False, help='Use data augmentation or not')
+# ## Model options
+# parser.add_argument('-rnn_type', default='LSTM', choices=['LSTM', 'GRU'], help='Layer type  [LSTM|GRU]')
+# parser.add_argument('-layers', type=int, default=1,help='Number of layers in the LSTM encoder/decoder')
+# parser.add_argument('-brnn', action='store_true', default=False,help='Use a bidirectional encoder')
+# parser.add_argument('-rnn_size', type=int, default=300,help='RNN cell hidden size')
+# parser.add_argument('-emb_size', type=int, default=100,help='Embedding size')
+# parser.add_argument('-attention', action='store_true', default=False,help='Use attention')
+# parser.add_argument('-bias', action='store_true', default=False,help='Add bias term')
+# parser.add_argument('-tie_decoder_embeddings', action='store_true', default=False,
+#                     help='Share parameters between decoder embeddings and output projection matrix. See https://arxiv.org/abs/1608.05859')
+# parser.add_argument('-share_embeddings', action='store_true', default=False,
+#                     help='Share the word embeddings between encoder and decoder. Drastically reduces number of learned parameters.')
+# parser.add_argument('-dropout', type=float, default=0.2,help='Dropout input of every RNN layer.')
+# parser.add_argument('-backward_splits', type=int, default=None,help='Backward with smaller batches to save memory.')
+# parser.add_argument('-teacher_forcing_ratio', type=float, default=0.6,help='Probablity of using teacher forcing (scheduled sampling)')
+# parser.add_argument('-noise_ratio', type=float, default=0.4,help='% extra noise to add')
+# ## Training
+# parser.add_argument('-batch_size', type=int, default=32,help='Training batch size')
+# parser.add_argument('-start_epoch', type=int, default=1,help='Epoch to start training.')
+# parser.add_argument('-end_epoch', type=int, default=1,help='Number of supervised learning epochs')
+# parser.add_argument('-optim', default='adam', choices=['sgd', 'adam', 'adagrad', 'adadelta'],help='Optimization method.')
+# parser.add_argument('-lr', type=float, default=0.01,help='Initial learning rate')
+# parser.add_argument('-max_grad_norm', type=float, default=5,help='Clip gradients by max global gradient norm. See https://arxiv.org/abs/1211.5063')
+# parser.add_argument('-learning_rate_decay', type=float, default=0.05,help='Multiply learning with this value after -start_decay_after epochs')
+# parser.add_argument('-start_decay_after', type=int, default=15,help='Decay learning rate AFTER this epoch')
+# ## GPU
+# parser.add_argument('-gpu', type=int, default=0,help='GPU id. Support single GPU only')
+# parser.add_argument('-log_interval', type=int, default=-1,help='Print stats after that many training steps')
+# parser.add_argument('-save_log', type=str, default='loss_folder',help='Save model and evaluate after that many training steps')
+# parser.add_argument('-save_interval', type=int, default=-1, help='save loss train and test')
+# parser.add_argument('-seed', type=int, default=3435,help='Random seed')
+# parser.add_argument('-logfolder', action='store_true', default=False, help='Log output to file')
+# parser.add_argument('-save_dir',default='saving', help='Directory to save model checkpoints')
+# parser.add_argument('-load_from', type=str, help='Path to a model checkpoint')
+# ## Inference
+# parser.add_argument('-eval', action='store_true',help='Evaluatation only mode')
+# parser.add_argument('-interactive', action='store_true',help='Interactive mode')
+# parser.add_argument('-max_train_decode_len', type=int, default=70,help='Max decoding length during training')
+# opt = parser.parse_args()
 
 
 # ## test hybrid
