@@ -135,12 +135,13 @@ class DataLoader(object):
                         if(self.opt.data_augm):
                             if random.random() > (1 - self.opt.noise_ratio):
                                 if iword == oword and len(iword) > 1 and len(oword) > 1 and not any(c.isdigit() for c in iword) and not any(c.isdigit() for c in oword):
-                                    file_word1 = copy.copy(iword)
+                                    #file_word1 = copy.copy(iword)
                                     iword = self.add_noise(iword)
-                                    while file_word1 == iword:
-                                        file_word1 = copy.copy(iword)
-                                        iword = self.add_noise(iword)
-                                        
+                                    #while file_word1 == iword:
+                                    #    file_word1 = copy.copy(iword)
+                                    #    iword = self.add_noise(iword)
+                                     
+   
                                     # aa_aa = iword
                                     # print('word sau khi add noise', unichr(int(aa_aa,16)))
                                     if(iword == '' or iword == ' '):
